@@ -1,26 +1,23 @@
 package yz.l.compose.demo
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import yz.l.compose.api.LoginGuideNavKey
-import yz.l.compose.demo.themes.AppTheme
-import yz.l.compose.impl.LotteryScreen
+import timber.log.Timber
+import yz.l.compose.discover.impl.navigation.discoverScreenEntry
+import yz.l.compose.home.api.HomeNavKey
+import yz.l.compose.home.impl.navigation.homeScreenEntry
 import yz.l.compose.impl.navigation.loginGuideScreenEntry
 import yz.l.compose.impl.navigation.loginScreenEntry
 import yz.l.compose.impl.navigation.lotteryScreenEntry
-import yz.l.compose.impl.states.AuthContext
-import yz.l.compose.impl.states.LocalLoginState
 import yz.l.core_router.LocalNavigator
-import yz.l.core_router.Navigator
-import yz.l.core_router.rememberResultStore
+import yz.l.core_router.NavigatorService
+import yz.l.core_router.rememberServiceSaver
 
 /**
  * desc:
@@ -29,41 +26,38 @@ import yz.l.core_router.rememberResultStore
 
 @Composable
 fun AppHost() {
-    Log.v("Initializer", "Apphost")
-    val navigator = rememberNavigator()
-    navigator.navigate(LoginGuideNavKey)
     CompositionLocalProvider(
-        LocalNavigator provides navigator,
-        LocalLoginState provides AuthContext.loginStateFlow.collectAsStateWithLifecycle().value
+        LocalNavigator provides rememberNavigator(),
     ) {
+        val navigator = LocalNavigator.current
         NavDisplay(
             entryDecorators = listOf(
-                // Add the default decorators for managing scenes and saving state
                 rememberSaveableStateHolderNavEntryDecorator(),
-                // Then add the view model store decorator
                 rememberViewModelStoreNavEntryDecorator()
             ),
             backStack = navigator.backStack,
             onBack = { navigator.back() },
             entryProvider = entryProvider {
-                loginScreenEntry()
-                lotteryScreenEntry()
-                loginGuideScreenEntry()
+                loginScreenEntry(navigator)
+                lotteryScreenEntry(navigator)
+                loginGuideScreenEntry(navigator)
+                homeScreenEntry()
+                discoverScreenEntry()
             })
     }
 }
 
 @Composable
-fun rememberNavigator(): Navigator {
-    val backStack = rememberNavBackStack()
-    val resultStore = rememberResultStore()
-    return Navigator(backStack, resultStore)
+fun rememberNavigator(): NavigatorService {
+    val backStack = rememberNavBackStack(HomeNavKey)
+    backStack.forEach {
+        Timber.v("backStack $it")
+    }
+    return rememberServiceSaver(backStack)
 }
 
 @Composable
 @Preview
 fun LotteryScreenPreview() {
-    AppTheme(true) {
-        LotteryScreen("") { }
-    }
+
 }

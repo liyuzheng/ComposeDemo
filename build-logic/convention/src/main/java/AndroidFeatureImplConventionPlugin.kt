@@ -15,7 +15,8 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply(plugin = "compose.demo.android.library.compose")
-
+            apply(plugin = "compose.demo.hilt")
+            apply(plugin = "compose.demo.room")
             val extension = extensions.getByType<LibraryExtension>()
             configureAndroidCompose(extension)
             dependencies {
@@ -30,8 +31,14 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("coil.kt").get())
                 "implementation"(libs.findLibrary("coil.kt.compose").get())
                 "implementation"(libs.findLibrary("coil.kt.svg").get())
+                "implementation"(libs.findLibrary("coil.kt.gif").get())
+                "implementation"(libs.findLibrary("androidx.paging.common").get())
+                "implementation"(libs.findLibrary("androidx.paging.compose").get())
                 "implementation"(project(":core:core_navigation"))
-
+                "implementation"(project(":feature:common"))
+                "implementation"(project(":core:theme"))
+                "implementation"(project(":core:core_tool"))
+                "implementation"(project(":core:network"))
             }
         }
     }

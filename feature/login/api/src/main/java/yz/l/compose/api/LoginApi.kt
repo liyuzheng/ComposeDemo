@@ -4,6 +4,7 @@ import yz.l.compose.data.LoginParams
 import yz.l.compose.data.LoginResult
 import yz.l.core_router.INavigationApi
 import yz.l.core_router.Navigator
+import yz.l.core_router.NavigatorService
 
 /**
  * desc:
@@ -11,7 +12,7 @@ import yz.l.core_router.Navigator
  */
 interface LoginApi : INavigationApi {
     fun action(
-        navigator: Navigator,
+        navigator: NavigatorService,
         requestLogin: Boolean = true,
         loginParams: MutableMap<LoginParams, Any> = mutableMapOf(),
         interceptBlock: Boolean = false,

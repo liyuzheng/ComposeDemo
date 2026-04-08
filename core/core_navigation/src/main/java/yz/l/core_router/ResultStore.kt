@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 
 /**
@@ -42,7 +43,7 @@ class ResultStore {
 
 /** Saver to save and restore the NavController across config change and process death. */
 private fun resultStoreSaver(): Saver<ResultStore, *> =
-    Saver(
+    mapSaver(
         save = { store ->
             // Save only the values, not the MutableState objects
             store.resultStateMap.mapValues { (_, state) -> state.value }

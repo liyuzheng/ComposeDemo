@@ -26,6 +26,7 @@ import yz.l.compose.convention.exts.libs
 class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            apply(plugin = "compose.demo.hilt")
             apply(plugin = "compose.demo.android.application")
             apply(plugin = "org.jetbrains.kotlin.plugin.compose")
             val extension = extensions.getByType<ApplicationExtension>()

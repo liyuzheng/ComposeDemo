@@ -10,16 +10,20 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class LoginResult {
     @Keep
-    class Success(val nothing: Nothing? = null) : LoginResult()
+    @Serializable
+    data class Success(val nothing: Nothing? = null) : LoginResult()
 
     @Keep
-    class UnKnown(val nothing: Nothing? = null) : LoginResult()
+    @Serializable
+    data class UnKnown(val nothing: Nothing? = null) : LoginResult()
 
     @Keep
-    class Cancel(val nothing: Nothing? = null) : LoginResult()
+    @Serializable
+    data class Cancel(val nothing: Nothing? = null) : LoginResult()
 
     @Keep
-    class Guest(val nothing: Nothing? = null) : LoginResult()
+    @Serializable
+    data class Guest(val nothing: Nothing? = null) : LoginResult()
 
 }
 

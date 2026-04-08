@@ -3,7 +3,8 @@ package yz.l.compose.api
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import yz.l.compose.data.LoginResult
-import yz.l.core_router.Navigator
+import yz.l.core_router.NavigatorService
+import yz.l.core_router.options.navOpt
 
 /**
  * desc:
@@ -11,11 +12,20 @@ import yz.l.core_router.Navigator
  */
 
 @Serializable
-data class LoginNavKey(val requestKey: String = "", val block: (LoginResult) -> Unit = {}) : NavKey
+data class LoginNavKey(
+    val requestKey: String = "",
+    val result: LoginResult = LoginResult.Success()
+) : NavKey {
 
-fun Navigator.navigateToLogin(
+}
+
+suspend fun NavigatorService.navigateToLogin(
     requestKey: String,
-    block: (LoginResult) -> Unit
+    block:suspend (LoginResult) -> Unit
 ) {
-    navigate(LoginNavKey(requestKey, block))
+
+    navigate(navOpt(LoginNavKey()) {
+        requestKey(requestKey)
+    })
+//    navigate(LoginNavKey(requestKey))
 }

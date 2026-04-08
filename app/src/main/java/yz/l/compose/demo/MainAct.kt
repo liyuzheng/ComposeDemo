@@ -3,22 +3,26 @@ package yz.l.compose.demo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
-import yz.l.compose.demo.themes.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
+import yz.l.compose.theme.AppTheme
 
 /**
  * desc:
  * created by liyuzheng on 2026/3/14 18:04
  */
+@AndroidEntryPoint
 class MainAct : ComponentActivity() {
     private val viewModel: MainActViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         splashScreen.setKeepOnScreenCondition {
             !viewModel.isReadyObs.value
         }
@@ -27,6 +31,7 @@ class MainAct : ComponentActivity() {
             AppTheme {
                 AppHost()
             }
+
         }
 //        setupExitSplashScreenAnim(splashScreen)
 

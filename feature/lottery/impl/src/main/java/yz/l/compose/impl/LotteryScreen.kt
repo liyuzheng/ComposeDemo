@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -13,19 +14,26 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Indefinite
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
+import timber.log.Timber
+import yz.l.compose.feature.common.component.ShowStatusBar
 
 /**
  * desc:
@@ -34,8 +42,16 @@ import androidx.compose.ui.graphics.Shape
 
 @Composable
 fun LotteryScreen(id: String, onClick: (String) -> Unit) {
+    ShowStatusBar(true)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var t1 by remember { mutableIntStateOf(1) }
+    var t2 by rememberSaveable { mutableIntStateOf(1) }
+    DisposableEffect(true) {
+        onDispose {
+            Timber.v("dispose")
+        }
+    }
     LaunchedEffect(true) {
         snackbarHostState.showSnackbar(
             message = "222222222222222",
@@ -43,9 +59,11 @@ fun LotteryScreen(id: String, onClick: (String) -> Unit) {
         )
     }
     Scaffold(
+        modifier = Modifier.padding(bottom = 48.dp),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
+                modifier = Modifier.offset(y = (-48).dp),
                 text = { Text("Show snackbar") },
                 icon = { },
                 onClick = {
@@ -54,6 +72,7 @@ fun LotteryScreen(id: String, onClick: (String) -> Unit) {
             )
         },
         content = { contentPadding ->
+            val scope = rememberCoroutineScope()
 
             Column(
                 modifier = Modifier
@@ -61,15 +80,20 @@ fun LotteryScreen(id: String, onClick: (String) -> Unit) {
                     .fillMaxWidth()
             ) {
                 AppButton(onClick = {
-                    onClick("testKey")
+//                        val result = navigator.navigateForResult<String>(LoginNavKey(), "test")
+//                        Log.v("result", "result is $result")
+
+//                        navigator.replace(LoginNavKey())
+//                    onClick("testKey")
                 }, all = true) {
                     Text("current $id")
                 }
 
                 AppButton(onClick = {
-
+                    t1++
+                    t2++
                 }, all = true) {
-                    Text("Click to navigate1")
+                    Text("Click to navigate1 $t1 $t2")
                 }
             }
         })

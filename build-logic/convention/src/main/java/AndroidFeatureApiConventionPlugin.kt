@@ -16,7 +16,7 @@ class AndroidFeatureApiConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "compose.demo.android.library.compose")
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-
+            apply(plugin = "compose.demo.hilt")
             val extension = extensions.getByType<LibraryExtension>()
             configureAndroidCompose(extension)
             dependencies {
@@ -27,6 +27,8 @@ class AndroidFeatureApiConventionPlugin : Plugin<Project> {
                     libs.findLibrary("androidx.compose.material3.adaptive.navigation3").get()
                 )
                 "implementation"(project(":core:core_navigation"))
+                "implementation"(project(":core:theme"))
+                "implementation"(project(":core:core_tool"))
             }
         }
     }

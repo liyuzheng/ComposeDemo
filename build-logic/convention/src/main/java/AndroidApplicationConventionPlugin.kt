@@ -29,10 +29,6 @@ abstract class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
             }
-
-            dependencies {
-                "implementation"(project(":core:core_tool"))
-            }
         }
     }
 }

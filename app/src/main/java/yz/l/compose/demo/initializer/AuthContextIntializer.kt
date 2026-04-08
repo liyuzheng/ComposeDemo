@@ -1,8 +1,8 @@
 package yz.l.compose.demo.initializer
 
 import android.content.Context
-import android.util.Log
 import androidx.startup.Initializer
+import timber.log.Timber
 import yz.l.compose.impl.states.AuthContext
 
 /**
@@ -11,11 +11,11 @@ import yz.l.compose.impl.states.AuthContext
  */
 class AuthContextInitializer : Initializer<Unit> {
     override fun create(ctx: Context) {
-        Log.v("AuthContextInitializer", "create authContext")
         AuthContext.init()
+        Timber.v("create MMKVInitializer")
     }
 
     override fun dependencies(): List<Class<out Initializer<*>?>?> {
-        return emptyList()
+        return listOf(MMKVInitializer::class.java, TimberInitializer::class.java)
     }
 }

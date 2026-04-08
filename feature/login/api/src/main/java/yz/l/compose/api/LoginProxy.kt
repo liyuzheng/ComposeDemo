@@ -4,6 +4,7 @@ import yz.l.compose.data.LoginParams
 import yz.l.compose.data.LoginResult
 import yz.l.core_router.Navigator
 import yz.l.core_router.NavigatorRegister
+import yz.l.core_router.NavigatorService
 
 /**
  * desc:
@@ -15,7 +16,7 @@ object LoginProxy {
     }
 
     fun action(
-        navigator: Navigator,
+        navigator: NavigatorService,
         requestLogin: Boolean = true,
         loginParams: MutableMap<LoginParams, Any> = mutableMapOf(),
         interceptBlock: Boolean = false,

@@ -80,10 +80,17 @@ gradlePlugin {
             id = libs.plugins.compose.demo.android.feature.impl.get().pluginId
             implementationClass = "AndroidFeatureImplConventionPlugin"
         }
-
         register("androidFeatureData") {
             id = libs.plugins.compose.demo.android.feature.data.get().pluginId
             implementationClass = "AndroidFeatureDataConventionPlugin"
+        }
+        register("hilt") {
+            id = libs.plugins.compose.demo.hilt.get().pluginId
+            implementationClass = "HiltConventionPlugin"
+        }
+        register("room") {
+            id = libs.plugins.compose.demo.room.get().pluginId
+            implementationClass = "AndroidRoomConventionPlugin"
         }
     }
 }

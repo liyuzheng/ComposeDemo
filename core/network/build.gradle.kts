@@ -9,6 +9,8 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.com.google.code.gson.gson)
     implementation(projects.core.coreTool)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 }

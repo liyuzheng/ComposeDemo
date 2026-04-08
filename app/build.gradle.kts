@@ -36,14 +36,24 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
     implementation(libs.androidx.startup.runtime)
     implementation(libs.com.tencent.mmkv.static)
+    implementation(libs.kotlinx.serialization.json)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(projects.core.network)
     implementation(projects.core.coreNavigation)
+    implementation(projects.core.theme)
+    implementation(projects.core.coreTool)
+
     implementation(projects.feature.lottery.api)
     implementation(projects.feature.lottery.impl)
     implementation(projects.feature.login.api)
     implementation(projects.feature.login.impl)
     implementation(projects.feature.login.data)
+    implementation(projects.feature.home.impl)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.common)
+    implementation(projects.feature.discover.api)
+    implementation(projects.feature.discover.impl)
+    implementation(projects.feature.discover.data)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
 }

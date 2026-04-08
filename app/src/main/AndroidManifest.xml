@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -38,6 +39,9 @@
                 android:value="androidx.startup" />
             <meta-data
                 android:name="yz.l.compose.demo.initializer.AuthContextInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="yz.l.compose.demo.initializer.TimberInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

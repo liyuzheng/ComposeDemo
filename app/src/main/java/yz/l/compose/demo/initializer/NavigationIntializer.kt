@@ -1,8 +1,8 @@
 package yz.l.compose.demo.initializer
 
 import android.content.Context
-import android.util.Log
 import androidx.startup.Initializer
+import timber.log.Timber
 import yz.l.compose.impl.provider.LoginProvider
 
 /**
@@ -11,11 +11,11 @@ import yz.l.compose.impl.provider.LoginProvider
  */
 class NavigationInitializer : Initializer<Unit> {
     override fun create(ctx: Context) {
-        Log.v("NavigationInitializer", "create Navigation")
         LoginProvider()
+        Timber.v("create NavigationInitializer")
     }
 
     override fun dependencies(): List<Class<out Initializer<*>?>?> {
-        return emptyList()
+        return listOf(TimberInitializer::class.java)
     }
 }

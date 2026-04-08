@@ -7,7 +7,7 @@ import yz.l.compose.data.LoginParams
 import yz.l.compose.data.LoginResult
 import yz.l.compose.data.UserMMKV
 import yz.l.compose.data.UserModel
-import yz.l.core_router.Navigator
+import yz.l.core_router.NavigatorService
 
 /**
  * desc:
@@ -18,13 +18,13 @@ object AuthContext {
     val loginStateFlow = MutableStateFlow<UserModel?>(null)
 
     fun init() {
-        if (UserMMKV.currentUser.uid.isNotBlank() &&
-            UserMMKV.token.isNotBlank()
-        ) {
-            login(UserMMKV.currentUser, UserMMKV.token)
-        } else {
-            logout()
-        }
+//        if (UserMMKV.currentUser.uid.isNotBlank() &&
+//            UserMMKV.token.isNotBlank()
+//        ) {
+//            login(UserMMKV.currentUser, UserMMKV.token)
+//        } else {
+//            logout()
+//        }
     }
 
     fun logout() {
@@ -42,7 +42,7 @@ object AuthContext {
     }
 
     fun action(
-        navigator: Navigator,
+        navigator: NavigatorService,
         requestLogin: Boolean = true,
         loginParams: MutableMap<LoginParams, Any> = mutableMapOf(),
         interceptBlock: Boolean = false,

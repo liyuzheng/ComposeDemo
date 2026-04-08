@@ -1,4 +1,4 @@
-package yz.l.compose.demo.themes
+package yz.l.compose.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

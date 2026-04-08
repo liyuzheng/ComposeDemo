@@ -19,9 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import yz.l.compose.api.LoginNavKey
-import yz.l.compose.data.LoginResult
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 /**
  * desc:
@@ -30,9 +28,8 @@ import yz.l.compose.data.LoginResult
 @Composable
 fun LoginScreen(
     onClick: (String) -> Unit,
-    block: (LoginResult) -> Unit
 ) {
-    val vm: LoginViewModel = viewModel<LoginViewModel>(key = LoginNavKey.toString())
+    val vm: LoginViewModel = hiltViewModel()
     LaunchedEffect(vm) {
         vm.test()
     }
@@ -44,7 +41,6 @@ fun LoginScreen(
     }
     LoginContent {
         onClick("testResult")
-        block(LoginResult.Success())
     }
 }
 
@@ -92,7 +88,7 @@ fun InputField() {
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 1),
             placeholder = { Text("") },
             textStyle = TextStyle(color = Color.Blue, fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(20.dp),
         )
 
         TextField(

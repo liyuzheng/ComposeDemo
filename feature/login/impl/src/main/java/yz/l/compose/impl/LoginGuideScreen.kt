@@ -1,7 +1,5 @@
 package yz.l.compose.impl
 
-import android.util.Log
-import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -26,7 +24,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +31,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,25 +38,17 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
-import yz.l.compose.api.LoginProxy
 import yz.l.compose.api.LotteryNavKey
-import yz.l.compose.data.onSuccess
+import yz.l.compose.feature.common.component.ShowStatusBar
 import yz.l.compose.login.impl.R
-import yz.l.core_router.LocalNavigator
-import yz.l.core_router.Navigator
-import yz.l.core_router.ResultStore
+import yz.l.core_router.NavigatorService
 
 /**
  * desc:
  * created by liyuzheng on 2026/3/25 21:11
  */
 @Composable
-fun LoginGuideScreen() {
-    val navigator = LocalNavigator.current
+fun LoginGuideScreen(navigator: NavigatorService) {
     LoginGuideScreen(navigator) {
 
     }
@@ -68,15 +56,10 @@ fun LoginGuideScreen() {
 
 @Composable
 fun LoginGuideScreen(
-    navigator: Navigator,
+    navigator: NavigatorService,
     onClick: () -> Unit
 ) {
-    val view = LocalView.current
-    val window = LocalActivity.current?.window
-    SideEffect {
-        val controller = WindowCompat.getInsetsController(window ?: return@SideEffect, view)
-        controller.hide(WindowInsetsCompat.Type.statusBars())
-    }
+    ShowStatusBar(false)
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         content = { paddingValues ->
@@ -87,24 +70,14 @@ fun LoginGuideScreen(
             ) {
                 AutoMarqueeImage(R.drawable.bg_login_guide)
                 BgGuide()
+
                 Button(
                     modifier = Modifier
                         .size(320.dp, 55.dp)
                         .align(Alignment.BottomCenter)
                         .offset(0.dp, (-80).dp),
                     onClick = {
-                        LoginProxy.action(navigator) {
-                            it.onSuccess {
-                                Log.v("loginresult", "22222")
-                                navigator.navigateAndRemoveCurrent(LotteryNavKey("test"))
-                            }
-                        }
-//                        navigator.navigate(LoginNavKey {
-//                            it.onSuccess {
-//                                Log.v("loginresult", "22222")
-//                                navigator.navigateAndRemoveCurrent(LotteryNavKey("test"))
-//                            }
-//                        })
+                        navigator.replace(LotteryNavKey(""))
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black,
@@ -201,6 +174,6 @@ fun AutoMarqueeImage(
 @Composable
 @Preview
 fun LoginGuideScreenPreview() {
-    val navigator = Navigator(NavBackStack<NavKey>(), ResultStore())
-    LoginGuideScreen(navigator) {}
+//    val navigator = Navigator(NavBackStack<NavKey>(), ResultStore())
+//    LoginGuideScreen(navigator) {}
 }

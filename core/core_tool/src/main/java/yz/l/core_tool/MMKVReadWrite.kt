@@ -2,7 +2,8 @@ package yz.l.core_tool
 
 import android.os.Parcelable
 import com.tencent.mmkv.MMKV
-import yz.l.core_tool.ext.gson
+import kotlinx.serialization.serializer
+import yz.l.core_tool.ext.json
 import yz.l.core_tool.ext.toJson
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -30,10 +31,15 @@ abstract class MMKVReadWrite<T>(private val key: String, private val defaultValu
                 }
 
                 else -> {
-                    gson.fromJson(
-                        getString(key, defaultValue?.toJson()),
-                        requireNotNull(defaultValue)::class.java
-                    ) ?: defaultValue
+                    val storedJson = getString(key, null)
+                    if (storedJson != null) {
+                        json.decodeFromString(
+                            serializer(requireNotNull(defaultValue)::class.java),
+                            storedJson
+                        ) as T
+                    } else {
+                        defaultValue
+                    } ?: defaultValue
                 }
             }
         } as T

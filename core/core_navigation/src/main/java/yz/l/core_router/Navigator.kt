@@ -1,10 +1,9 @@
 package yz.l.core_router
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.compositionLocalOf
+import android.util.Log
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * desc:
@@ -14,8 +13,8 @@ class Navigator(
     val backStack: NavBackStack<NavKey>,
     val resultStore: ResultStore
 ) {
-
     fun navigate(navKey: NavKey) {
+        Log.v("result", "navigate1111 $navKey")
         backStack.add(navKey)
     }
 
@@ -30,6 +29,7 @@ class Navigator(
     }
 
     fun back() {
+        Log.v("result", "navigate1111 ${backStack.lastOrNull()}")
         backStack.removeLastOrNull()
     }
 
@@ -39,18 +39,44 @@ class Navigator(
 
     fun popWithResult(resultKey: String, result: String) {
         resultStore.setResult<String>(resultKey = resultKey, result = result)
-        backStack.removeLastOrNull()
+        back()
     }
 
-    @Composable
-    inline fun <reified T> getResultState(resultKey: String): T? {
-        DisposableEffect(resultKey, resultStore.resultStateMap[resultKey]) {
-            onDispose {
-                resultStore.removeResult<T>(resultKey)
+    //    @Composable
+//    inline fun <reified T> getResultState(resultKey: String): T? {
+//        DisposableEffect(resultKey, resultStore.resultStateMap[resultKey]) {
+//            onDispose {
+//                resultStore.removeResult<T>(resultKey)
+//            }
+//        }
+//        return resultStore.getResultState<T>(resultKey)
+//    }
+    val resultCallbacks = mutableMapOf<String, (Any?) -> Unit>()
+    suspend inline fun <reified T> navigateForResult(
+        navKey: NavKey,
+        resultKey: String
+    ): T? {
+        val currNavKey = getCurrentNavKey().toString()
+        Log.v("result", "curr $currNavKey")
+        return suspendCancellableCoroutine { continuation ->
+            Log.v("result", "resultCallbacks1111")
+            resultCallbacks[resultKey] = { result ->
+                Log.v("result", "resultCallbacks $result")
+                if (result != null) {
+                    continuation.resumeWith(Result.success(result as T))
+                } else {
+                    continuation.resumeWith(Result.success(null))
+                }
+            }
+            navigate(navKey)
+            continuation.invokeOnCancellation { th ->
+                Log.v("result", "resultCallbacks remove $th")
+//                continuation.resumeWith(Result.failure(Throwable()))
+//                resultCallbacks.remove(resultKey)
             }
         }
-        return resultStore.getResultState<T>(resultKey)
     }
+
 
     fun navigateBackTo() {
 
@@ -60,8 +86,4 @@ class Navigator(
         resultStore.removeResult<T>(resultKey)
     }
 
-}
-
-val LocalNavigator = compositionLocalOf<Navigator> {
-    error("No LocalNavigator given")
 }

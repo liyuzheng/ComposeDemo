@@ -1,9 +1,9 @@
 package yz.l.compose.demo.initializer
 
 import android.content.Context
-import android.util.Log
 import androidx.startup.Initializer
 import com.tencent.mmkv.MMKV
+import timber.log.Timber
 
 /**
  * desc:
@@ -11,11 +11,11 @@ import com.tencent.mmkv.MMKV
  */
 class MMKVInitializer : Initializer<String> {
     override fun create(ctx: Context): String {
-        Log.v("MMKVInitializer", "create MMKV")
+        Timber.v("create MMKVInitializer")
         return MMKV.initialize(ctx)
     }
 
     override fun dependencies(): List<Class<out Initializer<*>?>?> {
-        return emptyList()
+        return listOf(TimberInitializer::class.java)
     }
 }

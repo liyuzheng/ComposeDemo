@@ -1,25 +1,23 @@
 package yz.l.core_tool.ext
 
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.Strictness
+import kotlinx.serialization.json.Json
 
 /**
  * desc:
  * createed by liyuzheng on 2023/8/24 20:40
  */
-val gson: Gson = GsonBuilder().apply {
-    setStrictness(Strictness.LENIENT)
-    setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-    serializeSpecialFloatingPointValues()
-}.disableHtmlEscaping().create()
+val json = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+    isLenient = true
+    coerceInputValues = true
+}
 
 inline fun <reified T> String?.toObject(): T? {
     this ?: return null
-    return gson.transform {
-        it.fromJson(this@toObject, T::class.java)
+    return json.transform {
+        it.decodeFromString(this)
     }
 }
 
-fun Any.toJson(): String? = gson.toJson(this)
+fun Any.toJson(): String = json.encodeToString(this.toString())
