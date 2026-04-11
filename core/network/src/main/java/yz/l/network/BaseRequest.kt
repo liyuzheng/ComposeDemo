@@ -1,6 +1,7 @@
 package yz.l.network
 
 import okhttp3.MediaType
+import timber.log.Timber
 import java.io.File
 
 class BaseRequest {
@@ -28,6 +29,10 @@ class BaseRequest {
 
     fun params(init: () -> Pair<String, Any?>) {
         val p = init()
+        if(params.contains(p.first)){
+            Timber.e("BaseRequest params 重复key")
+            throw IllegalArgumentException("params 重复key")
+        }
         params[p.first] = p.second
     }
 

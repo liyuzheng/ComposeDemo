@@ -21,5 +21,6 @@ fun ShowStatusBar(show: Boolean) {
             controller.show(WindowInsetsCompat.Type.statusBars())
         else
             controller.hide(WindowInsetsCompat.Type.statusBars())
+        controller.isAppearanceLightStatusBars = true
     }
 }

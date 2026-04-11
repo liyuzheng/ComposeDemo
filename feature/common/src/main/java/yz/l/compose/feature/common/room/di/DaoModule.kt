@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import yz.l.compose.feature.common.room.AppDataBase
+import yz.l.compose.feature.common.room.AppDatabase
 import yz.l.compose.feature.common.room.dao.DiscoverCardDao
 import yz.l.compose.feature.common.room.dao.RemoteDao
 
@@ -17,11 +17,11 @@ import yz.l.compose.feature.common.room.dao.RemoteDao
 internal object DaosModule {
     @Provides
     fun providesDiscoverDao(
-        database: AppDataBase,
+        database: AppDatabase,
     ): DiscoverCardDao = database.discoverDao()
 
     @Provides
     fun providesRemote(
-        database: AppDataBase,
+        database: AppDatabase,
     ): RemoteDao = database.remoteDao()
 }

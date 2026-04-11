@@ -4,7 +4,7 @@ import yz.l.compose.discover.data.BigDiscoverMultipleAppsCard
 import yz.l.compose.discover.data.DiscoverAppDetail
 import yz.l.compose.discover.data.DiscoverCard
 import yz.l.compose.discover.data.DiscoverCardDetail
-import yz.l.compose.discover.data.RecommendCard
+import yz.l.compose.discover.data.RecommendDiscoverCard
 import yz.l.compose.discover.data.SmallDiscoverCard
 import yz.l.compose.feature.common.room.entity.BigDiscoverCardEntity
 import yz.l.compose.feature.common.room.entity.DiscoverAppDetailEntity
@@ -29,7 +29,7 @@ fun DiscoverCard.toDiscoverCardDetailEntity(cardType: Int): DiscoverCardDetailEn
     return when (cardType) {
         1 -> (this as BigDiscoverMultipleAppsCard).toBigDiscoverCardEntity()
         2 -> (this as SmallDiscoverCard).toSmallDiscoverCardEntity()
-        3 -> (this as RecommendCard).toRecommendCardEntity()
+        3 -> (this as RecommendDiscoverCard).toRecommendCardEntity()
         else -> throw RuntimeException("cardType不存在$cardType")
     }
 }
@@ -57,7 +57,7 @@ fun SmallDiscoverCard.toSmallDiscoverCardEntity() = SmallDiscoverCardEntity(
     app = this.app.transform { it?.toDiscoverAppDetailEntity() }
 )
 
-fun RecommendCard.toRecommendCardEntity() = RecommendCardEntity(
+fun RecommendDiscoverCard.toRecommendCardEntity() = RecommendCardEntity(
     title = this.title,
     subTitle = this.subTitle,
     apps = this.apps.map { it.toDiscoverAppDetailEntity() }
@@ -101,7 +101,7 @@ fun SmallDiscoverCardEntity.toSmallDiscoverCard() = SmallDiscoverCard(
     app = this.app.transform { it?.toDiscoverAppDetail() }
 )
 
-fun RecommendCardEntity.toRecommendCard() = RecommendCard(
+fun RecommendCardEntity.toRecommendCard() = RecommendDiscoverCard(
     title = this.title,
     subTitle = this.subTitle,
     apps = this.apps.map { it.toDiscoverAppDetail() }.toMutableList()

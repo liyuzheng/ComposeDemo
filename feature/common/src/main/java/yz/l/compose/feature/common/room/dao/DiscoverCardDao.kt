@@ -22,7 +22,7 @@ interface DiscoverCardDao {
     @Query("SELECT * FROM discover_cards WHERE id = :id ")
     suspend fun getDiscoverCardById(id: Int): DiscoverCardTable?
 
-    @Query("SELECT * FROM discover_cards WHERE remoteName = :remoteName ORDER BY id")
+    @Query("SELECT * FROM discover_cards WHERE remoteName = :remoteName ORDER BY id ASC")
     fun getDiscoverCardPagingSource(remoteName:String):PagingSource<Int, DiscoverCardTable>
 
     @Query("DELETE FROM discover_cards WHERE remoteName = :remoteName")
@@ -30,4 +30,6 @@ interface DiscoverCardDao {
 
     @Query("SELECT * FROM discover_cards WHERE remoteName = :remoteName ORDER BY id")
     fun getAllDiscoverCards(remoteName:String): List<DiscoverCardTable>
+
+
 }

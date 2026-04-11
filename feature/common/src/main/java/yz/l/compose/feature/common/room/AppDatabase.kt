@@ -18,7 +18,7 @@ import yz.l.compose.feature.common.room.entity.RemoteEntity
     version = 1, exportSchema = false
 )
 @TypeConverters(value = [DiscoverCardConvert::class])
-abstract class AppDataBase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun discoverDao(): DiscoverCardDao
     abstract fun remoteDao(): RemoteDao
 }

@@ -6,7 +6,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import yz.l.compose.feature.common.room.AppDataBase
+import yz.l.compose.feature.common.room.AppDatabase
+import yz.l.compose.feature.common.room.api.DatabaseTransactionRunner
+import yz.l.compose.feature.common.room.provider.RoomTransactionRunnerProvider
 import javax.inject.Singleton
 
 /**
@@ -19,12 +21,18 @@ import javax.inject.Singleton
 object RoomModule {
     @Provides
     @Singleton
-    fun provideAppDataBase(application: Application): AppDataBase {
+    fun provideAppDataBase(application: Application): AppDatabase {
         return Room
-            .databaseBuilder(application, AppDataBase::class.java, "androidComposeDemo.db")
+            .databaseBuilder(application, AppDatabase::class.java, "androidComposeDemo.db")
             .allowMainThreadQueries()
             .fallbackToDestructiveMigration(true)
             .enableMultiInstanceInvalidation()
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoomTransactionRunner(appDataBase: AppDatabase): DatabaseTransactionRunner {
+        return RoomTransactionRunnerProvider(appDataBase)
     }
 }

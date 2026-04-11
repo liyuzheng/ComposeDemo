@@ -6,7 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import timber.log.Timber
-import yz.l.compose.feature.common.room.dao.RemoteDao
+import yz.l.compose.feature.common.room.api.RemoteRepoApi
 import yz.l.network.ResponseEmpty
 import yz.l.network.ext.toResponseException
 
@@ -17,14 +17,15 @@ import yz.l.network.ext.toResponseException
 @OptIn(ExperimentalPagingApi::class)
 abstract class BaseRemoteMediator<V : Any, T : Any>(
     open val remoteName: String = "",
-    open val remoteDao: RemoteDao,
-    open val clearBeforeLoad: Boolean = true
+    open val remoteRepo: RemoteRepoApi,
+    open val initializeClear: Boolean = true
 ) : RemoteMediator<Int, V>() {
+    abstract val defaultUrl: String
 
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun initialize(): InitializeAction {
-        Timber.v("InitializeAction clearLocalData")
-        if (clearBeforeLoad)
+        Timber.v("InitializeAction clearLocalData $initializeClear")
+        if (initializeClear)
             clearLocalData()
         return super.initialize()
     }
@@ -38,7 +39,7 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
     open suspend fun initLoadKey(
         remoteName: String,
     ): String? {
-        return remoteDao.getRemoteKeysAsync(remoteName)?.next
+        return remoteRepo.getRemoteKeysAsync(remoteName)?.next
     }
 
     /**
@@ -77,7 +78,8 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
         }
 //        return MediatorResult.Success(load(loadKey, loadType, state.config))
         return try {
-            val endOfPaginationReached = load(loadKey, loadType, state.config)
+            val endOfPaginationReached =
+                load(loadKey.ifBlank { defaultUrl }, loadType, state.config)
 
             if (endOfPaginationReached && loadType == LoadType.REFRESH) {
                 MediatorResult.Error(customEmpty(remoteName))
@@ -85,8 +87,8 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
                 MediatorResult.Success(endOfPaginationReached)
             }
         } catch (ex: Exception) {
-            Timber.v("load error $ex")
             val e = ex.toResponseException()
+            Timber.e("load error $e")
             MediatorResult.Error(e)
         }
     }

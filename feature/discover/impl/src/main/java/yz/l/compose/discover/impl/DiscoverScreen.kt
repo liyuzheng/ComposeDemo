@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,20 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -40,22 +38,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
 import timber.log.Timber
+import yz.l.compose.discover.data.BigDiscoverMultipleAppsCard
+import yz.l.compose.discover.data.DiscoverAppDetail
+import yz.l.compose.discover.data.RecommendDiscoverCard
+import yz.l.compose.discover.data.SmallDiscoverCard
 import yz.l.compose.discover.impl.viewmodels.DiscoverScreenViewModel
-import yz.l.compose.feature.common.room.entity.BigDiscoverCardEntity
-import yz.l.compose.feature.common.room.entity.DiscoverAppDetailEntity
-import yz.l.compose.feature.common.room.entity.RecommendCardEntity
-import yz.l.compose.feature.common.room.entity.SmallDiscoverCardEntity
+import yz.l.compose.feature.common.component.refreshlayout.PagingRefreshLayout
 
 /**
  * desc:
@@ -67,97 +67,39 @@ fun DiscoverScreen(
     viewModel: DiscoverScreenViewModel = hiltViewModel()
 ) {
     Scaffold(
-        modifier = Modifier.padding(horizontal = 24.dp),
         topBar = {
             AppTopBar()
         },
         content = { innerPadding ->
             val pagingItems = viewModel.discoverCardFlow.collectAsLazyPagingItems()
-            val isRefreshing = pagingItems.loadState.refresh is LoadState.Loading
-            Timber.v("load ${pagingItems.itemCount} $isRefreshing")
-
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = { pagingItems.refresh() },
+            PagingRefreshLayout(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                innerPadding = innerPadding,
+                pagingItems = pagingItems
             ) {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        0.dp,
-                        innerPadding.calculateTopPadding(),
-                        0.dp,
-                        100.dp
-                    ),
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(24.dp) // 设置卡片间隔
-                ) {
-                    // 3. 渲染数据列表
-                    items(
-                        count = pagingItems.itemCount,
-                        key = pagingItems.itemKey { it.id }, // 必须加 key，优化性能
-                        contentType = { index ->
+                items(
+                    count = pagingItems.itemCount,
+                    key = pagingItems.itemKey { it.id }, // 必须加 key，优化性能
+                    contentType = { index ->
+                        pagingItems.itemContentType {
                             val item = pagingItems[index]
                             item?.cardType ?: 0
                         }
-                    ) { index ->
-                        val item = pagingItems[index]
-                        Timber.v("items type  ${item?.id}=${item?.cardType}")
-                        when (item?.cardType) {
-                            1 -> BigCard(card = item.detail as BigDiscoverCardEntity)
-                            2 -> SmallCard(card = item.detail as SmallDiscoverCardEntity)
-                            3 -> RecommendCard(card = item.detail as RecommendCardEntity)
-                        }
                     }
-                    Timber.v("appendState state is ${pagingItems.loadState.append} ")
-                    when (val appendState = pagingItems.loadState.append) {
-                        is LoadState.Loading -> {
-                            Timber.v("appendState Loading ")
-                            item {
-                                // 加载中的 UI
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                                }
-                            }
-                        }
+                ) { index ->
+                    val item = pagingItems[index]
+                    if (item != null) {
+                        when (item.cardType) {
+                            1 -> BigCard(
+                                id = item.id,
+                                card = item.card as BigDiscoverMultipleAppsCard
+                            )
 
-                        is LoadState.Error -> {
-                            Timber.v("appendState Error ${pagingItems.loadState.append} ")
-
-                            item {
-                                // 加载失败的 UI，通常带有一个“重试”按钮
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("加载失败")
-                                    Button(onClick = { pagingItems.retry() }) {
-                                        Text("点击重试")
-                                    }
-                                }
-                            }
-                        }
-
-                        is LoadState.NotLoading -> {
-                            Timber.v("appendState NotLoading ${appendState.endOfPaginationReached} ")
-                            // 如果已全部加载完毕（endOfPaginationReached）
-                            if (appendState.endOfPaginationReached) {
-                                item {
-                                    Text(
-                                        text = "没有更多内容了",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        textAlign = TextAlign.Center,
-                                        color = Color.Gray
-                                    )
-                                }
+                            2 -> SmallCard(id = item.id, card = item.card as SmallDiscoverCard)
+                            3 -> RecommendCard(
+                                id = item.id,
+                                card = item.card as RecommendDiscoverCard
+                            ) {
                             }
                         }
                     }
@@ -172,8 +114,19 @@ fun AppTopBar() {
     Box(
         Modifier
             .fillMaxWidth()
-            .padding(0.dp, 24.dp, 0.dp, 12.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.LightGray.copy(alpha = 0.5f),
+                        Color.Transparent
+                    ),
+                    start = Offset(x = 0f, y = 0f),    // 顶部开始
+                    end = Offset(x = 0f, y = Float.POSITIVE_INFINITY) // 正下方结束
+                )
+            )
+            .padding(24.dp, 0.dp, 24.dp, 12.dp)
             .statusBarsPadding()
+
     ) {
         Row {
             Column(
@@ -181,14 +134,19 @@ fun AppTopBar() {
                     .weight(1f)
                     .align(Alignment.CenterVertically)
             ) {
-                Text(text = "探索", fontSize = 36.sp, fontWeight = FontWeight.ExtraBold)
+                Text(
+                    text = "探索",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.Black
+                )
             }
             Column(Modifier) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bg_discover_search), // 假设存为 xml
                     contentDescription = "Search",
                     tint = Color.Unspecified, // 保持原始白色系颜色
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier.size(36.dp)
                 )
             }
         }
@@ -196,7 +154,12 @@ fun AppTopBar() {
 }
 
 @Composable
-fun RecommendCard(modifier: Modifier = Modifier, card: RecommendCardEntity) {
+fun RecommendCard(
+    id: Int,
+    modifier: Modifier = Modifier,
+    card: RecommendDiscoverCard,
+    onClick: (String) -> Unit
+) {
     Card(
         shape = RoundedCornerShape(24.dp),
         modifier = modifier
@@ -206,28 +169,35 @@ fun RecommendCard(modifier: Modifier = Modifier, card: RecommendCardEntity) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Spacer(Modifier.size(24.dp))
-            Text(card.subTitle, fontSize = 16.sp, modifier = Modifier.padding(16.dp, 0.dp))
+            Text(card.subTitle, fontSize = 12.sp, modifier = Modifier.padding(16.dp, 0.dp))
             Text(
-                card.title,
-                fontSize = 36.sp,
+                card.title + id.toString(),
+                fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(16.dp, 0.dp)
             )
             card.apps.forEach { app ->
-                RecommendCardItem(app)
+                RecommendCardItem(id, app, onClick)
             }
         }
     }
 }
 
 @Composable
-fun RecommendCardItem(app: DiscoverAppDetailEntity) {
+fun RecommendCardItem(id: Int, app: DiscoverAppDetail, onClick: (String) -> Unit) {
     Row(Modifier.padding(16.dp)) {
         AsyncImage(
             model = app.iconUrl, // 图片地址（可以是 URL, File, Resource 等）
             contentDescription = "描述文字",
+            onState = { state ->
+                if (state is AsyncImagePainter.State.Error) {
+                    val throwable = state.result.throwable
+                    // 打印详细错误日志
+                    Timber.e("图片加载失败1: $id  ${app.iconUrl} $throwable")
+                }
+            },
             modifier = Modifier
-                .size(64.dp)
+                .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop, // 裁剪模式
         )
@@ -238,24 +208,30 @@ fun RecommendCardItem(app: DiscoverAppDetailEntity) {
         ) {
             Text(
                 app.name,
-                fontSize = 24.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(16.dp, 0.dp)
             )
             Text(
                 app.desc,
-                fontSize = 16.sp,
+                fontSize = 12.sp,
                 modifier = Modifier.padding(16.dp, 0.dp)
             )
         }
-        Button({}, modifier = Modifier.align(Alignment.Bottom)) {
-            Text("安装")
+        Button(
+            {
+                onClick(app.name)
+            }, modifier = Modifier
+                .align(Alignment.Bottom)
+                .size(80.dp, 32.dp)
+        ) {
+            Text("安装", fontSize = 12.sp, textAlign = TextAlign.Center, maxLines = 1)
         }
     }
 }
 
 @Composable
-fun SmallCard(modifier: Modifier = Modifier, card: SmallDiscoverCardEntity) {
+fun SmallCard(id: Int, modifier: Modifier = Modifier, card: SmallDiscoverCard) {
     val context = LocalContext.current
     val gifLoader = remember {
         ImageLoader.Builder(context)
@@ -270,7 +246,7 @@ fun SmallCard(modifier: Modifier = Modifier, card: SmallDiscoverCardEntity) {
         shape = RoundedCornerShape(24.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(120.dp)
     ) {
         Box {
             AsyncImage(
@@ -278,15 +254,27 @@ fun SmallCard(modifier: Modifier = Modifier, card: SmallDiscoverCardEntity) {
                 contentDescription = "描述文字",
                 modifier = Modifier
                     .fillMaxSize(),
+                onState = { state ->
+                    if (state is AsyncImagePainter.State.Error) {
+                        val throwable = state.result.throwable
+                        // 打印详细错误日志
+                        Timber.e("图片加载失败2: $id  ${card.bgUrl} $throwable")
+                    }
+                },
                 imageLoader = gifLoader,
                 contentScale = ContentScale.Crop // 裁剪模式
+            )
+            Text(
+                id.toString(),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(16.dp, 0.dp)
             )
         }
     }
 }
 
 @Composable
-fun BigCard(modifier: Modifier = Modifier, card: BigDiscoverCardEntity) {
+fun BigCard(id: Int, modifier: Modifier = Modifier, card: BigDiscoverMultipleAppsCard) {
     val context = LocalContext.current
     val gifLoader = remember {
         ImageLoader.Builder(context)
@@ -326,62 +314,43 @@ fun BigCard(modifier: Modifier = Modifier, card: BigDiscoverCardEntity) {
                 imageLoader = gifLoader,
                 contentScale = ContentScale.Crop // 裁剪模式
             )
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 // 关键：将内容推向底部
                 verticalArrangement = Arrangement.Bottom
             ) {
-                CardDesc(card.subTitle, card.title, card.desc)
+                CardDesc(card.subTitle, card.title + id.toString(), card.desc)
+                if (card.apps.isEmpty()) return@Box
                 Row(
                     Modifier
                         .background(Color(0X19000000))
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .align(Alignment.CenterHorizontally)
                 ) {
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        AsyncImage(
-                            model = "https://img1.baidu.com/it/u=4099671968,3977875320&fm=253&app=138&f=JPEG?w=800&h=1067", // 图片地址（可以是 URL, File, Resource 等）
-                            contentDescription = "描述文字",
-                            modifier = Modifier
-                                .size(64.dp, 64.dp)
-                                .align(Alignment.CenterHorizontally)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop // 裁剪模式
-                        )
-                    }
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        AsyncImage(
-                            model = "https://img1.baidu.com/it/u=4099671968,3977875320&fm=253&app=138&f=JPEG?w=800&h=1067", // 图片地址（可以是 URL, File, Resource 等）
-                            contentDescription = "描述文字",
-                            modifier = Modifier
-                                .size(64.dp, 64.dp)
-                                .align(Alignment.CenterHorizontally)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop // 裁剪模式
-                        )
-                    }
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        AsyncImage(
-                            model = "https://img1.baidu.com/it/u=4099671968,3977875320&fm=253&app=138&f=JPEG?w=800&h=1067", // 图片地址（可以是 URL, File, Resource 等）
-                            contentDescription = "描述文字",
-                            modifier = Modifier
-                                .size(64.dp, 64.dp)
-                                .align(Alignment.CenterHorizontally)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop // 裁剪模式
-                        )
+                    card.apps.forEach { app ->
+                        Column(
+                            Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            AsyncImage(
+                                model = app.iconUrl, // 图片地址（可以是 URL, File, Resource 等）
+                                contentDescription = "描述文字",
+                                onState = { state ->
+                                    if (state is AsyncImagePainter.State.Error) {
+                                        val throwable = state.result.throwable
+                                        // 打印详细错误日志
+                                        Timber.e("图片加载失败: $id  ${card.bgUrl} $throwable")
+                                    }
+                                },
+                                modifier = Modifier
+                                    .size(36.dp, 36.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop // 裁剪模式
+                            )
+                        }
                     }
                 }
             }
@@ -391,17 +360,23 @@ fun BigCard(modifier: Modifier = Modifier, card: BigDiscoverCardEntity) {
 
 @Composable
 fun CardDesc(subTitle: String, title: String, desc: String) {
-    Text(subTitle, fontSize = 16.sp, modifier = Modifier.padding(16.dp, 0.dp))
+    Text(
+        subTitle, fontSize = 12.sp,
+        lineHeight = 12.sp,
+        modifier = Modifier.padding(16.dp, 0.dp)
+    )
     Text(
         title,
-        fontSize = 36.sp,
+        fontSize = 20.sp,
+        lineHeight = 20.sp,
         fontWeight = FontWeight.ExtraBold,
         modifier = Modifier.padding(16.dp, 0.dp)
     )
     Text(
         desc,
-        fontSize = 20.sp,
+        fontSize = 12.sp,
+        lineHeight = 12.sp,
         modifier = Modifier.padding(start = 16.dp)
     )
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(8.dp))
 }

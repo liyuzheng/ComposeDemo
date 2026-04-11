@@ -2,7 +2,9 @@ package yz.l.network
 
 //import yz.l.core_tool.ext.debug
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import yz.l.core_tool.ext.debug
 import java.util.concurrent.TimeUnit
 
 /**
@@ -20,11 +22,11 @@ class RetrofitClient : IRetrofitClient {
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-//        debug {
-//            builder = builder.addInterceptor(HttpLoggingInterceptor().apply {
-//                level = HttpLoggingInterceptor.Level.BODY
-//            })
-//        }
+        debug {
+            builder = builder.addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+        }
         return builder.build()
     }
 

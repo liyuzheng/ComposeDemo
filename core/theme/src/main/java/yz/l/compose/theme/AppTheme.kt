@@ -15,7 +15,7 @@ val LightColorScheme = lightColorScheme(
     background = Color.White
 )
 val DarkColorScheme = darkColorScheme(
-    background = Color.Blue
+    background = Color.White
 )
 
 

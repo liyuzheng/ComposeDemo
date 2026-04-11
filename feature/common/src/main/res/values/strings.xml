@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading">加载中...</string>
+    <string name="load_more_pull">上拉加载更多</string>
+    <string name="load_more_loading">正在加载...</string>
+    <string name="load_more_success">加载成功</string>
+    <string name="load_more_error">加载失败</string>
+    <string name="load_more_error_retry">加载失败，点击重试</string>
+    <string name="load_more_no_more">没有更多了</string>
+    <string name="refresh_pull_down">下拉刷新</string>
+    <string name="refresh_release">松开刷新</string>
+    <string name="refresh_refreshing">刷新中...</string>
+    <string name="refresh_complete">刷新完成</string>
+</resources>

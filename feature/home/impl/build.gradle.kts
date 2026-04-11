@@ -10,4 +10,5 @@ dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.feature.lottery.api)
     implementation(projects.feature.discover.api)
+    implementation(libs.airbnb.lottie.compose)
 }

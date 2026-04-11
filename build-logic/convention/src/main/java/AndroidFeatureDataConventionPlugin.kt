@@ -17,6 +17,8 @@ class AndroidFeatureDataConventionPlugin : Plugin<Project> {
             apply(plugin = "compose.demo.android.library.compose")
             apply(plugin = "kotlin-parcelize")
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+            apply(plugin = "compose.demo.hilt")
+            apply(plugin = "compose.demo.room")
             val extension = extensions.getByType<LibraryExtension>()
             configureAndroidCompose(extension)
             dependencies {
@@ -26,6 +28,9 @@ class AndroidFeatureDataConventionPlugin : Plugin<Project> {
                 "implementation"(project(":core:core_tool"))
                 "implementation"(project(":core:network"))
                 "implementation"(project(":feature:common"))
+                "implementation"(libs.findLibrary("androidx.paging.common").get())
+                "implementation"(libs.findLibrary("androidx.paging.compose").get())
+                "implementation"(libs.findLibrary("androidx.room.paging").get())
             }
         }
     }
