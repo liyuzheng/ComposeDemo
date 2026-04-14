@@ -29,7 +29,8 @@ import yz.l.network.BaseResponse
 data class DiscoverCardModel(
     @SerialName("data")
     val cards: MutableList<DiscoverCardDetail> = mutableListOf(),
-    var next: String? = null
+    var next: String? = null,
+    var prev: String? = null
 ) : BaseResponse()
 
 @Serializable(with = DiscoverCardDetailSerializer::class)

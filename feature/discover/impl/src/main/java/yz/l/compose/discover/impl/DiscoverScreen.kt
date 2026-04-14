@@ -71,7 +71,7 @@ fun DiscoverScreen(
             AppTopBar()
         },
         content = { innerPadding ->
-            val pagingItems = viewModel.discoverCardFlow.collectAsLazyPagingItems()
+            val pagingItems = viewModel.pagingItems.collectAsLazyPagingItems()
             PagingRefreshLayout(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 innerPadding = innerPadding,
@@ -105,6 +105,11 @@ fun DiscoverScreen(
                     }
                 }
             }
+            Button(onClick = {
+                viewModel.searchObs.value = "3"
+            }, modifier = Modifier.padding(innerPadding)) {
+                Text("模拟搜索2")
+            }
         })
 }
 
@@ -117,7 +122,7 @@ fun AppTopBar() {
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        Color.LightGray.copy(alpha = 0.5f),
+                        Color.White.copy(alpha = 1f),
                         Color.Transparent
                     ),
                     start = Offset(x = 0f, y = 0f),    // 顶部开始

@@ -20,8 +20,6 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
     open val remoteRepo: RemoteRepoApi,
     open val initializeClear: Boolean = true
 ) : RemoteMediator<Int, V>() {
-    abstract val defaultUrl: String
-
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun initialize(): InitializeAction {
         Timber.v("InitializeAction clearLocalData $initializeClear")
@@ -78,14 +76,22 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
         }
 //        return MediatorResult.Success(load(loadKey, loadType, state.config))
         return try {
-            val endOfPaginationReached =
-                load(loadKey.ifBlank { defaultUrl }, loadType, state.config)
-
-            if (endOfPaginationReached && loadType == LoadType.REFRESH) {
-                MediatorResult.Error(customEmpty(remoteName))
-            } else {
+            if (loadType == LoadType.PREPEND) {
+                if (loadKey.isBlank()) return MediatorResult.Success(true)
+                val endOfPaginationReached =
+                    prepend(loadKey, loadType, state.config)
                 MediatorResult.Success(endOfPaginationReached)
+            } else {
+                val endOfPaginationReached =
+                    load(loadKey, loadType, state.config)
+
+                if (endOfPaginationReached && loadType == LoadType.REFRESH) {
+                    MediatorResult.Error(customEmpty(remoteName))
+                } else {
+                    MediatorResult.Success(endOfPaginationReached)
+                }
             }
+
         } catch (ex: Exception) {
             val e = ex.toResponseException()
             Timber.e("load error $e")
@@ -104,6 +110,6 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
     open suspend fun initPrependKey(
         remoteName: String,
     ): String? {
-        return null
+        return remoteRepo.getRemoteKeysAsync(remoteName)?.prepend
     }
 }

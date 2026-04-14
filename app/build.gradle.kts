@@ -55,5 +55,8 @@ dependencies {
     implementation(projects.feature.discover.api)
     implementation(projects.feature.discover.impl)
     implementation(projects.feature.discover.data)
+    implementation(projects.feature.game.data)
+    implementation(projects.feature.game.api)
+    implementation(projects.feature.game.impl)
 
 }

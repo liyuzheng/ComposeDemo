@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
  * created by liyuzheng on 2026/4/5 23:04
  */
 @Composable
-fun ShowStatusBar(show: Boolean) {
+fun SystemStatusBar(show: Boolean = true, isDarkIcon: Boolean = true) {
     val view = LocalView.current
     val window = LocalActivity.current?.window
     SideEffect {
@@ -21,6 +21,6 @@ fun ShowStatusBar(show: Boolean) {
             controller.show(WindowInsetsCompat.Type.statusBars())
         else
             controller.hide(WindowInsetsCompat.Type.statusBars())
-        controller.isAppearanceLightStatusBars = true
+        controller.isAppearanceLightStatusBars = isDarkIcon
     }
 }

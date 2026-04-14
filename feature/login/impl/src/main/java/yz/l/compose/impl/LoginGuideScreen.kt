@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yz.l.compose.api.LotteryNavKey
-import yz.l.compose.feature.common.component.ShowStatusBar
+import yz.l.compose.feature.common.component.SystemStatusBar
 import yz.l.compose.login.impl.R
 import yz.l.core_router.NavigatorService
 
@@ -59,7 +59,7 @@ fun LoginGuideScreen(
     navigator: NavigatorService,
     onClick: () -> Unit
 ) {
-    ShowStatusBar(false)
+    SystemStatusBar(false)
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         content = { paddingValues ->

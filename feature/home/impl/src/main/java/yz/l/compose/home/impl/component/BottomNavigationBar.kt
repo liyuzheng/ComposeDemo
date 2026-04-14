@@ -67,7 +67,7 @@ fun LightFlowLottieNavBar(
         modifier = modifier
             .padding(24.dp, 0.dp, 32.dp, 24.dp)
             .fillMaxWidth()
-            .height(32.dp)
+            .height(48.dp)
             .shadow(2.dp, shape = RoundedCornerShape(24.dp))
             .background(Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(24.dp))
             .background(Color.Transparent, shape = RoundedCornerShape(24.dp))

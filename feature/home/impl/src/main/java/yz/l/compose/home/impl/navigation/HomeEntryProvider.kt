@@ -11,7 +11,7 @@ import yz.l.compose.home.impl.HomeScreen
  */
 
 fun EntryProviderScope<NavKey>.homeScreenEntry() {
-    entry<HomeNavKey>() { _ ->
+    entry<HomeNavKey> { _ ->
         HomeScreen()
     }
 }

@@ -36,7 +36,14 @@ internal class DiscoverRepo @Inject constructor(
             cardEntities?.run {
                 dao.insertAllAsync(this)
             }
-            remoteRepo.insertAsync(RemoteModel(remoteName, model?.next.toString()))
+
+            remoteRepo.insertAsync(
+                RemoteModel(
+                    remoteName,
+                    model?.next.toString(),
+                    model?.prev.toString(),
+                )
+            )
         }
     }
 

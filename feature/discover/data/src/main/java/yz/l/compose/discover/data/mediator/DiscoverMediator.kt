@@ -25,8 +25,9 @@ import yz.l.network.ext.request
 class DiscoverMediator @AssistedInject constructor(
     override val remoteRepo: RemoteRepoApi,
     private val discoverRepo: DiscoverRepoApi,
-    @Assisted override val remoteName: String,
-    @Assisted override val initializeClear: Boolean = true
+    @Assisted("queryString") val queryString: String,
+    @Assisted("remoteName") override val remoteName: String,
+    @Assisted("initializeClear") override val initializeClear: Boolean = true
 ) :
     BaseRemoteMediator<DiscoverCardTable, DiscoverCardDetail>(
         remoteRepo = remoteRepo
@@ -56,8 +57,6 @@ class DiscoverMediator @AssistedInject constructor(
         return initializeAction
     }
 
-    override val defaultUrl: String get() = "https://liyuzheng.github.io/bigfile.io/compose/discover1.html"
-
     override suspend fun load(
         loadKey: String,
         loadType: LoadType,
@@ -67,16 +66,29 @@ class DiscoverMediator @AssistedInject constructor(
             delay(2000)
         }
         val repo = repo {
-            api { loadKey }
+            api { loadKey.ifBlank { queryString } }
         }
         Timber.v("loadtype $loadType $loadKey")
         val result = repo.request<DiscoverCardModel>()
 
         discoverRepo.insertAndUpdateNext(result, remoteName, loadType == LoadType.REFRESH)
         Timber.v("result next ${result.next} ${result.next.isNullOrBlank()} $loadType")
-
-
         return result.next.isNullOrBlank()
+    }
+
+    override suspend fun prepend(
+        loadKey: String,
+        loadType: LoadType,
+        pageConfig: PagingConfig
+    ): Boolean {
+        val repo = repo {
+            api { loadKey }
+        }
+        Timber.v("loadtype $loadType $loadKey")
+        val result = repo.request<DiscoverCardModel>()
+        discoverRepo.insertAndUpdateNext(result, remoteName, loadType == LoadType.REFRESH)
+        Timber.v("result next ${result.next} ${result.next.isNullOrBlank()} $loadType")
+        return result.prev.isNullOrBlank()
     }
 
     override suspend fun clearLocalData() {

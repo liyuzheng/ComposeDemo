@@ -14,11 +14,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import yz.l.compose.api.entrypoints.LotteryEntryPoint
 import yz.l.compose.discover.api.entrypoints.DiscoverEntryPoint
-import yz.l.compose.feature.common.component.ShowStatusBar
+import yz.l.compose.feature.common.component.SystemStatusBar
 import yz.l.compose.feature.common.injectModule
+import yz.l.compose.game.api.entrypooints.GameEntryPoint
 import yz.l.compose.home.impl.component.LightFlowLottieNavBar
 import yz.l.compose.home.impl.component.NavItem
 
@@ -28,16 +31,16 @@ import yz.l.compose.home.impl.component.NavItem
  */
 @Preview
 @Composable
-fun HomeScreen() {
-    ShowStatusBar(true)
+fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
     val lotteryApi = injectModule(LotteryEntryPoint::class.java).lotteryApi()
     val discoverApi = injectModule(DiscoverEntryPoint::class.java).discoverApi()
+    val gameApi = injectModule(GameEntryPoint::class.java).gameApi()
     val pagerState = rememberPagerState(0, pageCount = { 4 })
     val scope = rememberCoroutineScope()
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val navItems = listOf(
-        NavItem("首页", R.raw.ic_home),
-        NavItem("搜索", R.raw.ic_controller),
+        NavItem("探索", R.raw.ic_home),
+        NavItem("游戏", R.raw.ic_controller),
         NavItem("通知", R.raw.ic_packet),
         NavItem("我的", R.raw.ic_profile)
     )
@@ -45,16 +48,29 @@ fun HomeScreen() {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         content = { _ ->
+            SystemStatusBar(true, pagerState.currentPage % 2 == 0)
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false, // 禁用左右滑动，只允许点击底部栏切换
                 beyondViewportPageCount = 1 // 💡 预加载并保留相邻页面的状态
             ) { page ->
                 when (page) {
-                    0 -> discoverApi.GetDiscoverScreen()
-                    1 -> lotteryApi.GetLotteryScreen("2")
-                    2 -> lotteryApi.GetLotteryScreen("3")
-                    3 -> lotteryApi.GetLotteryScreen("4")
+                    0 -> {
+                        discoverApi.GetDiscoverScreen()
+                    }
+
+                    1 -> {
+                        gameApi.GetGameScreen()
+                    }
+
+                    2 -> {
+                        lotteryApi.GetLotteryScreen("3")
+                    }
+
+                    3 -> {
+                        lotteryApi.GetLotteryScreen("4")
+                    }
+
                     else -> lotteryApi.GetLotteryScreen("1")
                 }
             }
@@ -63,21 +79,14 @@ fun HomeScreen() {
             LightFlowLottieNavBar(
                 modifier = Modifier.navigationBarsPadding(),
                 items = navItems,
-                selectedIndex = selectedIndex,
-                onItemSelected = {
+                selectedIndex = uiState.value.selectedIndex,
+                onItemSelected = { index ->
+                    viewModel.dispatchIntent(HomeIntent.SelectedIndexChangedIntent(index))
                     scope.launch {
-                        pagerState.scrollToPage(selectedIndex)
+                        pagerState.scrollToPage(index)
                     }
-                    selectedIndex = it
                 }
             )
-
-//            BottomNavigationBar { index ->
-//                scope.launch {
-//                    pagerState.scrollToPage(index)
-//                }
-//                Timber.v("sss")
-//            }
         })
 }
 

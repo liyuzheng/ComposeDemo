@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import yz.l.compose.feature.common.component.ShowStatusBar
 
 /**
  * desc:
@@ -32,7 +31,6 @@ import yz.l.compose.feature.common.component.ShowStatusBar
 
 @Composable
 fun LotteryScreen(id: String, onClick: (String) -> Unit) {
-    ShowStatusBar(true)
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(

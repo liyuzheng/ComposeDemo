@@ -10,6 +10,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import timber.log.Timber
 import yz.l.compose.discover.impl.navigation.discoverScreenEntry
+import yz.l.compose.game.impl.navigation.gameScreenEntry
 import yz.l.compose.home.api.HomeNavKey
 import yz.l.compose.home.impl.navigation.homeScreenEntry
 import yz.l.compose.impl.navigation.loginGuideScreenEntry
@@ -43,6 +44,7 @@ fun AppHost() {
                 loginGuideScreenEntry(navigator)
                 homeScreenEntry()
                 discoverScreenEntry()
+                gameScreenEntry()
             })
     }
 }

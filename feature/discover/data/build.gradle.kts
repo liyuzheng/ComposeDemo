@@ -1,5 +1,3 @@
-import yz.l.compose.convention.exts.libs
-
 plugins {
     alias(libs.plugins.compose.demo.android.feature.data)
 }
