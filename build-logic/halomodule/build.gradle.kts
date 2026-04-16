@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     `kotlin-dsl`
 }
@@ -32,11 +34,19 @@ tasks {
     }
 }
 
-dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+gradlePlugin {
+    plugins {
+        register("haloModuleLauncher") {
+            id = libs.plugins.compose.demo.halo.modulelauncher.get().pluginId
+            implementationClass = "HaloModuleLauncher"
+        }
+        register("haloModule") {
+            id = libs.plugins.compose.demo.halo.module.get().pluginId
+            implementationClass = "HaloModule"
+        }
+    }
+}
+
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

@@ -110,7 +110,7 @@ fun AppTopBar() {
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = "探索",
+                    text = "探索11",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.Black

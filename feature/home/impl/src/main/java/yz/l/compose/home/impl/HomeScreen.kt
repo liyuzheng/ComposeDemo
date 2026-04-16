@@ -35,13 +35,13 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
     val lotteryApi = injectModule(LotteryEntryPoint::class.java).lotteryApi()
     val discoverApi = injectModule(DiscoverEntryPoint::class.java).discoverApi()
     val gameApi = injectModule(GameEntryPoint::class.java).gameApi()
-    val pagerState = rememberPagerState(0, pageCount = { 4 })
+    val pagerState = rememberPagerState(0, pageCount = { 5 })
     val scope = rememberCoroutineScope()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val navItems = listOf(
         NavItem("探索", R.raw.ic_home),
         NavItem("游戏", R.raw.ic_controller),
-        NavItem("通知", R.raw.ic_packet),
+        NavItem("应用", R.raw.ic_packet),
         NavItem("我的", R.raw.ic_profile)
     )
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -98,7 +98,7 @@ fun PreviewBottomBar() {
     val navItems = listOf(
         NavItem("首页", R.raw.ic_home),
         NavItem("搜索", R.raw.ic_home),
-        NavItem("通知", R.raw.ic_home),
+        NavItem("应用", R.raw.ic_home),
         NavItem("我的", R.raw.ic_home)
     )
     LightFlowLottieNavBar(

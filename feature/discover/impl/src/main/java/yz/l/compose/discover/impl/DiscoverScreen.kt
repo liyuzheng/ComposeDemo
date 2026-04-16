@@ -66,6 +66,7 @@ import yz.l.compose.feature.common.component.refreshlayout.PagingRefreshLayout
 fun DiscoverScreen(
     viewModel: DiscoverScreenViewModel = hiltViewModel()
 ) {
+    Timber.v("DiscoverScreen compose")
     Scaffold(
         topBar = {
             AppTopBar()

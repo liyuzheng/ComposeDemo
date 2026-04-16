@@ -19,6 +19,6 @@ class SingleTopNavigateStrategy : AbsSimpleNavigateStrategy() {
         if (currNavKey::class == targetNavKey::class) {
             backStack.removeLastOrNull()
         }
-        backStack.add(navigatorOptions.navKey ?: return)
+        backStack.add(navigatorOptions.navKey)
     }
 }

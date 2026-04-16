@@ -11,8 +11,12 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url = uri("${rootDir}/local-repo")
+        }
     }
 }
 

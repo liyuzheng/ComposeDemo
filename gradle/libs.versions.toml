@@ -162,3 +162,5 @@ compose-demo-network = { id = "compose.demo.network" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-demo-hilt = { id = "compose.demo.hilt" }
 compose-demo-room = { id = "compose.demo.room" }
+compose-demo-halo-modulelauncher = { id = "compose.demo.halo.modulelauncher" }
+compose-demo-halo-module = { id = "compose.demo.halo.module" }
