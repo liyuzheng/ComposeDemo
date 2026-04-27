@@ -6,6 +6,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import timber.log.Timber
 
 /**
  * desc:
@@ -15,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 fun SystemStatusBar(show: Boolean = true, isDarkIcon: Boolean = true) {
     val view = LocalView.current
     val window = LocalActivity.current?.window
+    Timber.v("SystemStatusBar $show $isDarkIcon")
     SideEffect {
         val controller = WindowCompat.getInsetsController(window ?: return@SideEffect, view)
         if (show)

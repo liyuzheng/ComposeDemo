@@ -1,4 +1,4 @@
-package yz.l.compose.home.impl.component
+package yz.l.compose.main.impl.component
 
 import android.os.Build
 import androidx.compose.animation.core.Animatable

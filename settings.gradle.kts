@@ -11,18 +11,25 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        maven {
+            url = uri("${rootDir}/local-repo")
+            println("current maven url is $url")
+        }
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            url = uri("${rootDir}/local-repo")
-        }
+
     }
 }
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven {
+            url = uri("${rootDir}/local-repo")
+            println("current maven url is $url")
+        }
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -45,9 +52,9 @@ include(":feature:lottery:api")
 include(":feature:lottery:impl")
 include(":feature:login:data")
 include(":feature:common")
-include(":feature:home")
-include(":feature:home:impl")
-include(":feature:home:api")
+include(":feature:main")
+include(":feature:main:impl")
+include(":feature:main:api")
 include(":feature:discover")
 include(":feature:discover:api")
 include(":feature:discover:impl")
@@ -56,3 +63,7 @@ include(":feature:game")
 include(":feature:game:api")
 include(":feature:game:impl")
 include(":feature:game:data")
+include(":feature:home")
+include(":feature:home:api")
+include(":feature:home:data")
+include(":feature:home:impl")

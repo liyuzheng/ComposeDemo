@@ -5,7 +5,3 @@ plugins {
 android {
     namespace = "yz.l.compose.home.api"
 }
-
-dependencies {
-
-}

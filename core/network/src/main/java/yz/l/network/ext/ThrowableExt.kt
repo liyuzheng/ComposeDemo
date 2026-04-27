@@ -5,6 +5,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import timber.log.Timber
 import yz.l.core_tool.ext.toObject
 import yz.l.network.ErrorMessageBean
 import yz.l.network.ErrorResponse
@@ -16,6 +17,7 @@ import yz.l.network.ResponseException
  * createed by liyuzheng on 2023/6/2 10:25
  */
 suspend fun Throwable.toPair(): Pair<Int, String> {
+    Timber.v("request Exception $this")
     return when (val e = this) {
         is HttpException -> {
             runCatching {
@@ -26,8 +28,7 @@ suspend fun Throwable.toPair(): Pair<Int, String> {
                     errorJson.toObject()
                 }
                 Pair(
-                    errorRsp?.code ?: NetworkExceptionConstantCode.UN_KNOWN,
-                    errorRsp?.mes ?: ""
+                    errorRsp?.code ?: NetworkExceptionConstantCode.UN_KNOWN, errorRsp?.mes ?: ""
                 )
             }.getOrElse {
                 Pair(NetworkExceptionConstantCode.CANCEL, "error")
@@ -52,8 +53,7 @@ fun Throwable.toResponseException(): ResponseException {
                 val errorRsp: ErrorMessageBean =
                     errorJson.toObject() ?: throw JsonSyntaxException("json转换失败")
                 ResponseException(
-                    errorRsp.error.code,
-                    "HttpException:${errorRsp.error.message}"
+                    errorRsp.error.code, "HttpException:${errorRsp.error.message}"
                 )
             } catch (ex: JsonSyntaxException) {
                 ResponseException(
@@ -62,8 +62,7 @@ fun Throwable.toResponseException(): ResponseException {
                 )
             } catch (ex: Exception) {
                 ResponseException(
-                    NetworkExceptionConstantCode.UN_KNOWN,
-                    "HttpException: unknown ${ex.message}"
+                    NetworkExceptionConstantCode.UN_KNOWN, "HttpException: unknown ${ex.message}"
                 )
             }
         }
@@ -74,15 +73,13 @@ fun Throwable.toResponseException(): ResponseException {
 
         is JsonSyntaxException -> {
             ResponseException(
-                NetworkExceptionConstantCode.JSON_SYNTAX_EXCEPTION,
-                "json error ${e.message}"
+                NetworkExceptionConstantCode.JSON_SYNTAX_EXCEPTION, "json error ${e.message}"
             )
         }
 
         else -> {
             ResponseException(
-                NetworkExceptionConstantCode.NETWORK_ERROR,
-                "network_error ${e.message}"
+                NetworkExceptionConstantCode.NETWORK_ERROR, "network_error ${e.message}"
             )
         }
     }

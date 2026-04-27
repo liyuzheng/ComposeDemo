@@ -1,6 +1,7 @@
 package yz.l.core_tool.ext
 
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 /**
  * desc:
@@ -15,9 +16,9 @@ val json = Json {
 
 inline fun <reified T> String?.toObject(): T? {
     this ?: return null
-    return json.transform {
-        it.decodeFromString(this)
-    }
+    Timber.v(" String?.toObject $this")
+    return json.decodeFromString(this)
 }
 
 fun Any.toJson(): String = json.encodeToString(this.toString())
+

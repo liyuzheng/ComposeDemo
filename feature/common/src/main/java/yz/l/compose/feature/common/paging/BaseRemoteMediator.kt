@@ -78,6 +78,7 @@ abstract class BaseRemoteMediator<V : Any, T : Any>(
         return try {
             if (loadType == LoadType.PREPEND) {
                 if (loadKey.isBlank()) return MediatorResult.Success(true)
+                Timber.v("BaseRemoteMediator $loadType ${loadKey == "null"}")
                 val endOfPaginationReached =
                     prepend(loadKey, loadType, state.config)
                 MediatorResult.Success(endOfPaginationReached)

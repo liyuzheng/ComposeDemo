@@ -31,7 +31,6 @@ class MainAct : ComponentActivity() {
             AppTheme {
                 AppHost()
             }
-
         }
 //        setupExitSplashScreenAnim(splashScreen)
 

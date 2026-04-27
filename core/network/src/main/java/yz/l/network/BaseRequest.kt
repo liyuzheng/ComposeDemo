@@ -11,25 +11,27 @@ class BaseRequest {
 
     var file: File? = null
 
-    private var params = mutableMapOf<String, Any?>()
+    private var params = mutableMapOf<String, String>()
 
     var contentType: MediaType? = null
 
-    fun api(init: () -> String) {
-        api = init()
+    var needAccessToken: Boolean = true
+
+    fun api(value: String) {
+        api = value
     }
 
-    fun requestMode(init: () -> Int) {
-        requestMode = init()
+    fun requestMode(value: Int) {
+        requestMode = value
     }
 
     fun file(init: () -> File) {
         file = init()
     }
 
-    fun params(init: () -> Pair<String, Any?>) {
+    fun params(init: () -> Pair<String, String>) {
         val p = init()
-        if(params.contains(p.first)){
+        if (params.contains(p.first)) {
             Timber.e("BaseRequest params 重复key")
             throw IllegalArgumentException("params 重复key")
         }
@@ -44,7 +46,11 @@ class BaseRequest {
         return "api:$api \n params :$params"
     }
 
-    fun reflectParameters(): MutableMap<String, Any?> {
+    fun needAccessToken(value: Boolean) {
+        needAccessToken = value
+    }
+
+    fun reflectParameters(): MutableMap<String, String> {
         return params
     }
 

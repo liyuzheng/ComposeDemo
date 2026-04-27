@@ -5,3 +5,4 @@ package yz.l.compose.halomodule.constants
  * created by liyuzheng on 2026/4/16 21:02
  */
 const val MAVEN_LOCAL_DIR = "/local-repo"
+var test = 0

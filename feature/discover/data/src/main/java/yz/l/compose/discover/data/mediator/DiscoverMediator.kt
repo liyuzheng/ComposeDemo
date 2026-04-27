@@ -66,7 +66,7 @@ class DiscoverMediator @AssistedInject constructor(
             delay(2000)
         }
         val repo = repo {
-            api { loadKey.ifBlank { queryString } }
+            api(loadKey.ifBlank { queryString })
         }
         Timber.v("loadtype $loadType $loadKey")
         val result = repo.request<DiscoverCardModel>()
@@ -82,12 +82,12 @@ class DiscoverMediator @AssistedInject constructor(
         pageConfig: PagingConfig
     ): Boolean {
         val repo = repo {
-            api { loadKey }
+            api(loadKey)
         }
-        Timber.v("loadtype $loadType $loadKey")
+        Timber.v("prepend loadType $loadType $loadKey")
         val result = repo.request<DiscoverCardModel>()
         discoverRepo.insertAndUpdateNext(result, remoteName, loadType == LoadType.REFRESH)
-        Timber.v("result next ${result.next} ${result.next.isNullOrBlank()} $loadType")
+        Timber.v("result next ${result.prev} ${result.prev.isNullOrBlank()} $loadType")
         return result.prev.isNullOrBlank()
     }
 

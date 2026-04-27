@@ -7,9 +7,8 @@ import yz.l.compose.home.impl.HomeScreen
 
 /**
  * desc:
- * created by liyuzheng on 2026/4/6 19:49
+ * created by liyuzheng on 2026/4/25 16:38
  */
-
 fun EntryProviderScope<NavKey>.homeScreenEntry() {
     entry<HomeNavKey> { _ ->
         HomeScreen()

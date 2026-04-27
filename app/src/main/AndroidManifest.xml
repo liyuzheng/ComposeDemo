@@ -18,11 +18,19 @@
         <activity
             android:name=".MainAct"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.Nia.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="yuzheng" android:host="auth_success" />
+            </intent-filter>
+
         </activity>
 
         <provider

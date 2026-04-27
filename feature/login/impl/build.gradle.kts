@@ -10,4 +10,5 @@ dependencies {
     implementation(projects.feature.login.api)
     implementation(projects.feature.login.data)
     implementation(projects.feature.lottery.api)
+    implementation(libs.androidx.browser)
 }

@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.compose.demo.android.application.compose)
-    alias(libs.plugins.compose.demo.halo.modulelauncher)
     alias(libs.plugins.compose.demo.network)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -50,13 +49,17 @@ dependencies {
     implementation(projects.feature.login.api)
     implementation(projects.feature.login.impl)
     implementation(projects.feature.login.data)
-    implementation(projects.feature.home.impl)
-    implementation(projects.feature.home.api)
+    implementation(projects.feature.main.impl)
+    implementation(projects.feature.main.api)
     implementation(projects.feature.common)
     implementation(projects.feature.discover.api)
     implementation(projects.feature.discover.impl)
     implementation(projects.feature.discover.data)
     implementation(projects.feature.game.data)
     implementation(projects.feature.game.impl)
+    implementation(projects.feature.game.api)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.impl)
+    implementation(projects.feature.home.data)
 
 }

@@ -11,4 +11,6 @@ object NetworkExceptionConstantCode {
     const val CANCEL = -3
     const val NETWORK_ERROR = -1
     const val EMPTY_ERROR = -5
+
+    const val NEED_ACCESS_TOKEN = "NEED_ACCESS_TOKEN"
 }

@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 @Keep
 sealed class Result<out T> {
     @Keep
-    class Loading<out T>(val loading: Boolean) : Result<T>()
+    class Loading<out T> : Result<T>()
 
     @Keep
     class Success<out T>(val value: T) : Result<T>()
@@ -20,9 +20,9 @@ sealed class Result<out T> {
     class Cancel(val nothing: Nothing? = null) : Result<Nothing>()
 }
 
-inline fun <reified T> Result<T>.onLoading(block: (loading: Boolean) -> Unit) {
+inline fun <reified T> Result<T>.onLoading(block: () -> Unit) {
     if (this is Result.Loading) {
-        block(loading)
+        block()
     }
 }
 

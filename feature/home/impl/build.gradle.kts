@@ -8,8 +8,6 @@ android {
 
 dependencies {
     implementation(projects.feature.home.api)
-    implementation(projects.feature.lottery.api)
-    implementation(projects.feature.discover.api)
-    implementation(projects.feature.game.api)
-    implementation(libs.airbnb.lottie.compose)
+    implementation(projects.feature.home.data)
+    implementation(projects.feature.login.api)
 }

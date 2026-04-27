@@ -42,14 +42,20 @@ class Repo {
             }
 
             RequestMode.POST -> {
+//                val jsonParams = buildJsonObject {
+//                    params.forEach { (k, v) ->
+//                        put(k, JsonPrimitive(v.toString()))
+//                    }
+//                }
                 apiService.post(
                     api,
-                    buildBody(params)
+                    params
                 )
             }
 
             RequestMode.GET -> {
                 apiService.get(
+                    request.needAccessToken.toString(),
                     api,
                     buildBody(params)
                 )
@@ -82,7 +88,7 @@ class Repo {
         }
     }
 
-    private fun buildBody(body: MutableMap<String, Any?>): MutableMap<String, Any?> {
+    private fun buildBody(body: MutableMap<String, String>): MutableMap<String, String> {
         return body
     }
 

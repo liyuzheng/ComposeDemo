@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.feature.discover.api)
     implementation(projects.feature.discover.data)
+    implementation(projects.feature.login.api)
 }

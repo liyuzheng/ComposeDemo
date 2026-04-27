@@ -3,8 +3,11 @@ package yz.l.network
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -19,14 +22,16 @@ import retrofit2.http.Url
 interface Api {
     @GET
     suspend fun get(
+        @Header(NetworkExceptionConstantCode.NEED_ACCESS_TOKEN) needAccessToken: String,
         @Url url: String,
-        @QueryMap body: MutableMap<String, Any?>,
+        @QueryMap body: MutableMap<String, String>,
     ): String
 
     @POST
+    @FormUrlEncoded
     suspend fun post(
         @Url url: String,
-        @Body body: MutableMap<String, Any?>,
+        @FieldMap body: Map<String, String>,
     ): String
 
     @Multipart
@@ -39,18 +44,18 @@ interface Api {
     @PUT
     suspend fun put(
         @Url url: String,
-        @Body body: MutableMap<String, Any?>,
+        @Body body: MutableMap<String, String>,
     ): String
 
     @DELETE
     suspend fun delete(
         @Url url: String,
-        @QueryMap body: MutableMap<String, Any?>,
+        @QueryMap body: MutableMap<String, String>,
     ): String
 
     @HTTP(method = "DELETE", hasBody = true)
     suspend fun deleteBody(
         @Url url: String,
-        @Body body: MutableMap<String, Any?>,
+        @Body body: MutableMap<String, String>,
     ): String
 }

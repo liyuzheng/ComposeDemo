@@ -50,12 +50,14 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
 import timber.log.Timber
+import yz.l.compose.api.LoginNavKey
 import yz.l.compose.discover.data.BigDiscoverMultipleAppsCard
 import yz.l.compose.discover.data.DiscoverAppDetail
 import yz.l.compose.discover.data.RecommendDiscoverCard
 import yz.l.compose.discover.data.SmallDiscoverCard
 import yz.l.compose.discover.impl.viewmodels.DiscoverScreenViewModel
 import yz.l.compose.feature.common.component.refreshlayout.PagingRefreshLayout
+import yz.l.core_router.LocalNavigator
 
 /**
  * desc:
@@ -72,6 +74,7 @@ fun DiscoverScreen(
             AppTopBar()
         },
         content = { innerPadding ->
+            val navigator = LocalNavigator.current
             val pagingItems = viewModel.pagingItems.collectAsLazyPagingItems()
             PagingRefreshLayout(
                 modifier = Modifier.padding(horizontal = 24.dp),
@@ -107,9 +110,9 @@ fun DiscoverScreen(
                 }
             }
             Button(onClick = {
-                viewModel.searchObs.value = "3"
+                navigator.navigate(LoginNavKey())
             }, modifier = Modifier.padding(innerPadding)) {
-                Text("模拟搜索2")
+                Text("模拟搜111索")
             }
         })
 }
@@ -141,7 +144,7 @@ fun AppTopBar() {
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = "探索",
+                    text = "探索222333",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.Black

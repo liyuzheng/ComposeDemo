@@ -29,7 +29,7 @@ class Navigator(
     }
 
     fun back() {
-        Log.v("result", "navigate1111 ${backStack.lastOrNull()}")
+        Log.v("resul111t", "navigate1111 ${backStack.lastOrNull()}")
         backStack.removeLastOrNull()
     }
 

@@ -40,8 +40,8 @@ internal class DiscoverRepo @Inject constructor(
             remoteRepo.insertAsync(
                 RemoteModel(
                     remoteName,
-                    model?.next.toString(),
-                    model?.prev.toString(),
+                    model?.next ?: "",
+                    model?.prev ?: ""
                 )
             )
         }

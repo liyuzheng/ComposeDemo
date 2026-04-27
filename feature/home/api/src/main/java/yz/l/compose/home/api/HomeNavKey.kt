@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * desc:
- * created by liyuzheng on 2026/4/6 19:49
+ * created by liyuzheng on 2026/4/25 16:32
  */
 @Serializable
 data object HomeNavKey : NavKey

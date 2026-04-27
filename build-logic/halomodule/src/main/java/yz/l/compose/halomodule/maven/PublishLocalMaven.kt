@@ -19,7 +19,7 @@ import java.io.File
  * createed by liyuzheng on 2022/8/15 12:05
  */
 object PublishLocalMaven {
-    const val MAVEN_PATH = "/.gradle/output/.haloModule/.repo"
+    const val MAVEN_PATH = "/local-repo"
     const val MAVEN_GROUP = "com.starmaker.halomodule"
     const val MAVEN_VERSION = "1.0.0-SNAPSHOT"
     fun configLocalAarMavenPublication(
