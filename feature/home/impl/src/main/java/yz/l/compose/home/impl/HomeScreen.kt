@@ -19,9 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import timber.log.Timber
 import yz.l.compose.feature.common.component.AppTopBar
 import yz.l.compose.feature.common.component.refreshlayout.PagingRefreshLayout
-import yz.l.compose.home.data.PlaylistModel
 import yz.l.compose.home.data.RadioModel
 import yz.l.compose.home.data.TrackModel
 
@@ -56,17 +54,22 @@ fun HomeScreenPreview() {
 
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
-    var hideTopBar by remember { mutableStateOf(false) }
-
+    val listState = rememberLazyListState()
+    val shouldHideTopBar by remember {
+        derivedStateOf {
+            val headerInfo = listState.layoutInfo.visibleItemsInfo
+                .firstOrNull { it.key == "my_sticky" }
+            (headerInfo?.offset ?: 0) < 0
+        }
+    }
     Scaffold(topBar = {
-        AppTopBar("首页", hideTopBar)
+        AppTopBar("首页", shouldHideTopBar)
     }, content = { innerPadding ->
         Timber.v("HomeScreen compose ${innerPadding.calculateTopPadding()}")
         val topOffset = (-40).dp // 想要的距离顶部的高度
         val density = LocalDensity.current
-        val offsetPx = with(density) { topOffset.roundToPx() }
+        val offsetPx = remember { with(density) { topOffset.roundToPx() } }
 
-        val listState = rememberLazyListState()
         // 监听第一个可见 stickyHeader 的信息
         val stickyHeaderOffset by remember {
             derivedStateOf {
@@ -76,7 +79,6 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                 else {
                     // 当头部即将吸顶时，动态调整偏移
                     val offsetToTop = headerInfo.offset
-                    hideTopBar = offsetToTop < 0
                     if (offsetToTop < offsetPx) {
                         offsetPx - offsetToTop
                     } else {
@@ -87,8 +89,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
         }
         val pagingItems = viewModel.pagingItems.collectAsLazyPagingItems()
         PagingRefreshLayout(
-            modifier = Modifier.padding(horizontal = 24.dp),
             cState = listState,
+            modifier = Modifier.padding(horizontal = 24.dp),
             innerPadding = innerPadding,
             pagingItems = pagingItems
         ) {
@@ -98,16 +100,27 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                 }
             }
             if (pagingItems.itemCount > 5) {
-                val item = pagingItems[1]
+                val item = pagingItems.peek(1)
                 item(key = "radio", contentType = { "radio" }) {
                     RadioCard(item?.radios)
                 }
             }
             if (pagingItems.itemCount > 5) {
-                libsBar(stickyHeaderOffset)
+                libsBar(offsetProvider = { stickyHeaderOffset })
+//                stickyHeader(key = "my_sticky", contentType = { "my_sticky" }) {
+//                    Box(
+//                        modifier = Modifier
+//                            .height(40.dp)
+//                            .fillMaxWidth()
+//                            .offset { IntOffset(0, stickyHeaderOffset) } // 动态偏移
+//                            .background(Color.Gray)
+//                            .padding(16.dp)) {
+//                        Text("吸顶头部（距离顶部 ${stickyHeaderOffset}）")
+//                    }
+//                }
             }
             if (pagingItems.itemCount > 5) {
-                val item = pagingItems[3]
+                val item = pagingItems.peek(3)
                 item(key = "track", contentType = { "track" }) {
                     TrackCard(item?.tracks)
                 }
@@ -120,12 +133,13 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
 
             items(
                 (pagingItems.itemCount - 5).coerceAtLeast(0),
-                key = { index -> "playlist$index " },
-                contentType = { _ -> "playlist" }
+                key = pagingItems.itemKey { it.feedId }, // 必须加 key，优化性能
             ) { index ->
-                val realIndex = index + 5
-                val item = pagingItems[realIndex]
-                PlaylistCard(item?.playlist)
+                Timber.v("home recom")
+                val item = pagingItems[index]
+                if (item != null) {
+                    PlaylistCard(item.feedId.toString())
+                }
             }
 
 //            for (index in 0 until itemCount) {
@@ -191,15 +205,16 @@ fun TitleBar() {
     )
 }
 
-fun LazyListScope.libsBar(stickyHeaderOffset: Int) {
+fun LazyListScope.libsBar(offsetProvider: () -> Int) {
     stickyHeader(key = "my_sticky", contentType = { "my_sticky" }) {
         Box(
             modifier = Modifier
+                .height(40.dp)
                 .fillMaxWidth()
-                .offset { IntOffset(0, stickyHeaderOffset) } // 动态偏移
+                .offset { IntOffset(0, offsetProvider()) } // 动态偏移
                 .background(Color.Gray)
                 .padding(16.dp)) {
-            Text("吸顶头部（距离顶部 ${stickyHeaderOffset}）")
+            Text("吸顶头部（距离顶部 ${offsetProvider()}）")
         }
     }
 }
@@ -213,7 +228,9 @@ fun RadioCard(radios: List<RadioModel>?) {
         text = strs.toString(),
         fontSize = 12.sp,
         lineHeight = 12.sp,
-        modifier = Modifier.padding(16.dp, 0.dp)
+        modifier = Modifier
+            .height(40.dp)
+            .padding(16.dp, 0.dp)
     )
 }
 
@@ -226,14 +243,20 @@ fun TrackCard(tracks: List<TrackModel>?) {
         text = strs.toString(),
         fontSize = 12.sp,
         lineHeight = 12.sp,
-        modifier = Modifier.padding(16.dp, 0.dp)
+        modifier = Modifier
+            .height(40.dp)
+            .padding(16.dp, 0.dp)
     )
 }
 
 @Composable
-fun PlaylistCard(playlist: PlaylistModel?) {
-    val strs = playlist?.name.toString()
+fun PlaylistCard(str: String) {
     Text(
-        text = strs, fontSize = 12.sp, lineHeight = 12.sp, modifier = Modifier.padding(16.dp, 0.dp)
+        text = str,
+        fontSize = 12.sp,
+        lineHeight = 12.sp,
+        modifier = Modifier
+            .height(40.dp)
+            .padding(16.dp, 0.dp)
     )
 }

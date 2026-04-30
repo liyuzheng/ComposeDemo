@@ -84,13 +84,10 @@ fun DiscoverScreen(
                 items(
                     count = pagingItems.itemCount,
                     key = pagingItems.itemKey { it.id }, // 必须加 key，优化性能
-                    contentType = { index ->
-                        pagingItems.itemContentType {
-                            val item = pagingItems[index]
-                            item?.cardType ?: 0
-                        }
-                    }
+                    contentType = pagingItems.itemContentType { it.cardType }
                 ) { index ->
+                    Timber.v("current $index")
+
                     val item = pagingItems[index]
                     if (item != null) {
                         when (item.cardType) {

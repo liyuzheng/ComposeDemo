@@ -9,5 +9,5 @@ val DEFAULT_PAGER = PagingConfig(
     pageSize = PAGE_SIZE,
     initialLoadSize = PAGE_SIZE * 2,
     prefetchDistance = 5,
-    enablePlaceholders = true
+    enablePlaceholders = false
 )
