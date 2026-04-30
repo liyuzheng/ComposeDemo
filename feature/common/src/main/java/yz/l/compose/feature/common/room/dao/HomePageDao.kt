@@ -41,4 +41,20 @@ interface HomePageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllTracks(mList: List<TrackEntity>)
+
+    @Query("DELETE FROM home_page_index_table WHERE remoteName = :remoteName")
+    suspend fun clearHomeItem(remoteName: String)
+
+    @Query("DELETE FROM feed_item_ref WHERE remoteName = :remoteName")
+    suspend fun clearFeedItemRef(remoteName: String)
+
+
+    @Query("DELETE FROM radio_table WHERE remoteName = :remoteName")
+    suspend fun clearRadio(remoteName: String)
+
+    @Query("DELETE FROM track_table WHERE remoteName = :remoteName")
+    suspend fun clearTrack(remoteName: String)
+
+    @Query("DELETE FROM playlist_table WHERE remoteName = :remoteName")
+    suspend fun clearPlaylist(remoteName: String)
 }

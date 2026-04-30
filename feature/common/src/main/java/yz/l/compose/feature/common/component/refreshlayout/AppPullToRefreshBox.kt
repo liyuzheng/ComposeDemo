@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -54,6 +56,7 @@ import yz.l.compose.feature.common.R
 @Composable
 fun PagingRefreshLayout(
     modifier: Modifier = Modifier,
+    cState: LazyListState = rememberLazyListState(),
     innerPadding: PaddingValues = PaddingValues(0.dp),
     pagingItems: LazyPagingItems<*>,
     initializeLoading: @Composable BoxScope.() -> Unit = {
@@ -111,6 +114,7 @@ fun PagingRefreshLayout(
             }
         } else {
             PagingRefreshLayoutContainer(
+                cState = cState,
                 modifier = modifier.fillMaxSize(),
                 innerPadding = innerPadding,
                 isRefreshing = loadState is LoadState.Loading && !isInit,
@@ -137,6 +141,7 @@ fun LoadingPlace(
 @Composable
 fun PagingRefreshLayoutContainer(
     modifier: Modifier,
+    cState: LazyListState = rememberLazyListState(),
     innerPadding: PaddingValues = PaddingValues(0.dp),
     isRefreshing: Boolean,
     pagingItems: LazyPagingItems<*>,
@@ -161,6 +166,7 @@ fun PagingRefreshLayoutContainer(
         }
     ) {
         PagingRefreshLayoutItems(
+            state = cState,
             innerPadding = innerPadding,
             pagingItems = pagingItems,
             itemContent = itemContent
@@ -170,11 +176,13 @@ fun PagingRefreshLayoutContainer(
 
 @Composable
 fun PagingRefreshLayoutItems(
+    state: LazyListState = rememberLazyListState(),
     innerPadding: PaddingValues = PaddingValues(0.dp),
     pagingItems: LazyPagingItems<*>,
     itemContent: LazyListScope.() -> Unit
 ) {
     LazyColumn(
+        state = state,
         contentPadding = PaddingValues(
             0.dp,
             innerPadding.calculateTopPadding(),

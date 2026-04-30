@@ -37,8 +37,13 @@ class HomePageRepo @Inject constructor(
         next: String?
     ) {
         databaseTransactionRunner {
-            dao.insertAllHomePageIndexes(homeIndexes)
-            dao.insertAllRefs(refs)
+            val playlistEntities = playlists?.map {
+                it.toPlaylistEntity(remoteName)
+            }
+            playlistEntities?.run {
+                dao.insertAllPlaylists(this)
+            }
+
             val radioEntities = radios?.map {
                 it.toRadioEntity(remoteName)
             }
@@ -51,12 +56,8 @@ class HomePageRepo @Inject constructor(
             trackEntities?.run {
                 dao.insertAllTracks(this)
             }
-            val playlistEntities = playlists?.map {
-                it.toPlaylistEntity(remoteName)
-            }
-            playlistEntities?.run {
-                dao.insertAllPlaylists(this)
-            }
+            dao.insertAllHomePageIndexes(homeIndexes)
+            dao.insertAllRefs(refs)
             remoteRepo.insertAsync(RemoteModel(remoteName, next.toString()))
         }
     }
@@ -71,8 +72,9 @@ class HomePageRepo @Inject constructor(
             val homeItemRefs = mutableListOf<FeedItemRef>()
             val lastFeedId = dao.getLastFeedId() ?: 0L
             items.results?.forEachIndexed { index, model ->
-                val feedId = index + lastFeedId
-                val playlistItem = HomePageIndexEntity(feedId, "playlist", remoteName, 5)
+                val feedId = index + lastFeedId + 1
+                val playlistItem =
+                    HomePageIndexEntity(feedId, "playlist", remoteName, feedId.toInt())
                 homeItems.add(playlistItem)
                 homeItemRefs.add(FeedItemRef(remoteName, feedId, model.playlistId, 2))
             }
@@ -89,5 +91,15 @@ class HomePageRepo @Inject constructor(
 
     override fun getHomeItemPagingItems(remoteName: String): PagingSource<Int, HomeItem> {
         return dao.getHomeItemPagingSource()
+    }
+
+    override suspend fun clearData(remoteName: String) {
+        databaseTransactionRunner {
+            dao.clearRadio(remoteName)
+            dao.clearFeedItemRef(remoteName)
+            dao.clearHomeItem(remoteName)
+            dao.clearTrack(remoteName)
+            dao.clearPlaylist(remoteName)
+        }
     }
 }

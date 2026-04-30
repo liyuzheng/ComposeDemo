@@ -93,8 +93,9 @@ class HomePageMediator @AssistedInject constructor(
             homeItems.add(titleItem)
 
             playlists.results?.forEachIndexed { index, model ->
-                val feedId = index + 4L
-                val playlistItem = HomePageIndexEntity(feedId, "playlist", remoteName, 5)
+                val feedId = index + 5L
+                val playlistItem =
+                    HomePageIndexEntity(feedId, "playlist", remoteName, feedId.toInt())
                 homeItems.add(playlistItem)
                 homeItemRefs.add(FeedItemRef(remoteName, feedId, model.playlistId, 2))
             }
@@ -120,5 +121,10 @@ class HomePageMediator @AssistedInject constructor(
             homePageRepo.insertPlaylists(remoteName, result, nextKey)
         }
         return nextKey.isNullOrBlank()
+    }
+
+    override suspend fun clearLocalData() {
+        super.clearLocalData()
+        homePageRepo.clearData(remoteName)
     }
 }

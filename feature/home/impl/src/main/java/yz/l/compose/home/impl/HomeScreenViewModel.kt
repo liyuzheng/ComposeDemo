@@ -20,7 +20,10 @@ class HomeScreenViewModel @Inject constructor(
     private val homePageRepo: HomePageRepoApi,
     private val factory: HomePageMediatorFactory
 ) : BaseViewModel() {
-    fun fetchHomeItems(): Flow<PagingData<HomeItemModel>> {
+
+    val pagingItems = fetchHomeItems()
+
+    private fun fetchHomeItems(): Flow<PagingData<HomeItemModel>> {
         return factory.create().request(
             viewModel = this,
             fetchData = {

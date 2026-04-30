@@ -52,6 +52,12 @@ data class HomeItem(
     )
     val radios: List<RadioEntity> = emptyList(),
 
-    @Relation(parentColumn = "feedId", entityColumn = "playlistId") // 假设歌单是一对一或简单的
+    @Relation(
+        parentColumn = "feedId", entityColumn = "playlistId", associateBy = Junction(
+            value = FeedItemRef::class,
+            parentColumn = "parentFeedId",
+            entityColumn = "itemId"
+        )
+    ) // 假设歌单是一对一或简单的
     val playlist: PlaylistEntity? = null
 )

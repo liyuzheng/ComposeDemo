@@ -31,4 +31,6 @@ interface HomePageRepoApi {
     )
 
     fun getHomeItemPagingItems(remoteName: String): PagingSource<Int, HomeItem>
+
+    suspend fun clearData(remoteName: String)
 }

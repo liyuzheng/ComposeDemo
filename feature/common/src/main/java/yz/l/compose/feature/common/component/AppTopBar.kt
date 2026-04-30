@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -28,7 +29,7 @@ import yz.l.compose.feature.common.R
  * created by liyuzheng on 2026/4/25 16:44
  */
 @Composable
-fun AppTopBar(title: String) {
+fun AppTopBar(title: String, shouldHideTopBar: Boolean = false) {
     Box(
         Modifier
             .fillMaxWidth()
@@ -44,7 +45,14 @@ fun AppTopBar(title: String) {
             )
             .padding(24.dp, 0.dp, 24.dp, 12.dp)
             .statusBarsPadding()
-
+            .let { mod ->
+                if (shouldHideTopBar) {
+                    // 隐藏：透明度 0，不可交互
+                    mod.alpha(0f)
+                } else {
+                    mod.alpha(1f)
+                }
+            }
     ) {
         Row {
             Column(
