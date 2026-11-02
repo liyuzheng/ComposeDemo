@@ -8,6 +8,6 @@ val DEFAULT_PAGER = PagingConfig(
     // 每页显示的数据的大小
     pageSize = PAGE_SIZE,
     initialLoadSize = PAGE_SIZE * 2,
-    prefetchDistance = 5,
-    enablePlaceholders = false
+    prefetchDistance = 6,
+    enablePlaceholders = true
 )

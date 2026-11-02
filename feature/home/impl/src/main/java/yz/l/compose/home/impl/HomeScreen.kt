@@ -1,9 +1,13 @@
 package yz.l.compose.home.impl
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -12,8 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,12 +31,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -35,6 +50,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.size.Precision
 import timber.log.Timber
 import yz.l.compose.feature.common.component.AppTopBar
 import yz.l.compose.feature.common.component.refreshlayout.PagingRefreshLayout
@@ -102,22 +121,11 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
             if (pagingItems.itemCount > 5) {
                 val item = pagingItems.peek(1)
                 item(key = "radio", contentType = { "radio" }) {
-                    RadioCard(item?.radios)
+                    RadioCard({ item?.radios }, viewModel)
                 }
             }
             if (pagingItems.itemCount > 5) {
                 libsBar(offsetProvider = { stickyHeaderOffset })
-//                stickyHeader(key = "my_sticky", contentType = { "my_sticky" }) {
-//                    Box(
-//                        modifier = Modifier
-//                            .height(40.dp)
-//                            .fillMaxWidth()
-//                            .offset { IntOffset(0, stickyHeaderOffset) } // 动态偏移
-//                            .background(Color.Gray)
-//                            .padding(16.dp)) {
-//                        Text("吸顶头部（距离顶部 ${stickyHeaderOffset}）")
-//                    }
-//                }
             }
             if (pagingItems.itemCount > 5) {
                 val item = pagingItems.peek(3)
@@ -141,25 +149,6 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                     PlaylistCard(item.feedId.toString())
                 }
             }
-
-//            for (index in 0 until itemCount) {
-//                val item = pagingItems[index]
-//                when (item?.type) {
-//                    "search" -> item(key = item.feedId, contentType = { "search" }) { SearchBar() }
-//                    "radio" -> item(
-//                        key = item.feedId,
-//                        contentType = { "radio" }) { RadioCard(item.radios) }
-//
-//                    "libs" -> stickyHeader(key = item.feedId, contentType = { "libs" }) {
-//                        LibsBar(stickyHeaderOffset)
-//                    }
-//
-//                    "title" -> item(key = item.feedId, contentType = { "title" }) { TitleBar() }
-//                    "playlist" -> item(key = item.feedId, contentType = { "playlist" }) {
-//                        PlaylistCard(item.playlist)
-//                    }
-//                }
-//            }
         }
     })
 }
@@ -167,7 +156,6 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
 @Composable
 @Preview
 fun SearchBar() {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()              // 占据整行宽度
@@ -220,18 +208,81 @@ fun LazyListScope.libsBar(offsetProvider: () -> Int) {
 }
 
 @Composable
-fun RadioCard(radios: List<RadioModel>?) {
-    val strs = radios?.map {
-        it.name
+fun RadioCard(data: () -> List<RadioModel>?, viewModel: HomeScreenViewModel) {
+    val radios = data()
+    Timber.v("RadioCard ${radios?.size}")
+    val context = LocalContext.current
+    val pagerState = rememberPagerState(pageCount = { radios?.size ?: 0 })
+    HorizontalPager(
+        pageSize = PageSize.Fixed(180.dp),
+        state = pagerState,
+        contentPadding = PaddingValues(start = 0.dp, end = 80.dp),
+        pageSpacing = 16.dp,
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
+        val radio = radios?.getOrNull(page) ?: return@HorizontalPager
+        val request = remember(radio.image) {
+            ImageRequest.Builder(context)
+                .data(radio.image)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .precision(Precision.EXACT)
+                .crossfade(false)
+                .memoryCacheKey("${radio.image}_150")
+                .placeholderMemoryCacheKey("${radio.image}_150")
+                .size(150)
+                .build()
+        }
+        Card(
+            modifier = Modifier
+                .size(180.dp, 220.dp)
+        ) {
+            Box(contentAlignment = Alignment.BottomStart) {
+                AsyncImage(
+                    model = request,
+                    contentDescription = "描述文字",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .blur(8.dp),
+                    contentScale = ContentScale.Crop // 裁剪模式
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .background(Color(0X19000000)),
+                    // 关键：将内容推向底部
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        "Now",
+                        fontSize = 20.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier.padding(16.dp, 0.dp)
+                    )
+                    Text(
+                        radio.name, fontSize = 12.sp,
+                        lineHeight = 12.sp,
+                        modifier = Modifier.padding(16.dp, 0.dp)
+                    )
+                }
+                IconButton(onClick = {
+                    viewModel.fetchRadioById(radio.radioId.toString())
+                }) {
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = yz.l.compose.home.impl.R.drawable.ic_play), // 假设存为 xml
+                        contentDescription = "play",
+                        tint = Color.Unspecified, // 保持原始白色系颜色
+                        modifier = Modifier
+                            .size(36.dp)
+                            .align(Alignment.BottomEnd)
+                    )
+                }
+            }
+        }
     }
-    Text(
-        text = strs.toString(),
-        fontSize = 12.sp,
-        lineHeight = 12.sp,
-        modifier = Modifier
-            .height(40.dp)
-            .padding(16.dp, 0.dp)
-    )
 }
 
 @Composable

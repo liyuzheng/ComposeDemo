@@ -45,6 +45,7 @@ dependencies {
     implementation(projects.core.coreNavigation)
     implementation(projects.core.theme)
     implementation(projects.core.coreTool)
+    implementation(projects.core.media)
 
     implementation(projects.feature.lottery.api)
     implementation(projects.feature.lottery.impl)

@@ -52,5 +52,15 @@
                 android:name="yz.l.compose.demo.initializer.TimberInitializer"
                 android:value="androidx.startup" />
         </provider>
+
+        <service
+            android:name="yz.l.compose.media.PlaybackService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService"/>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
     </application>
 </manifest>

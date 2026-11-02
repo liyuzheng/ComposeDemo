@@ -2,6 +2,7 @@
 browser = "1.10.0"
 dynamicanimation = "1.1.0"
 kotlinxCoroutinesCore = "1.10.2"
+media3Exoplayer = "1.10.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 startupRuntime = "1.2.0"
 timber = "5.0.1"
@@ -137,6 +138,15 @@ androidx-paging-common = { group = "androidx.paging", name = "paging-common", ve
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 airbnb-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieVersion" }
+
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui-compose-material3 = { module = "androidx.media3:media3-ui-compose-material3", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
+androidx-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3Exoplayer" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3Exoplayer" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3Exoplayer" }
+androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3Exoplayer" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
